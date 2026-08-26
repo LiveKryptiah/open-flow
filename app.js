@@ -1192,27 +1192,6 @@ async function handleInAppRegister(e) {
   }
 }
 
-async function handleLogout() {
-  try {
-    await fetch('/api/auth/logout', {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ token: authToken })
-    });
-  } catch (e) {}
-
-  localStorage.removeItem('openflow_token');
-  localStorage.removeItem('openflow_user');
-  authToken = '';
-  currentUser = null;
-
-  document.getElementById('userDropdownMenu').classList.add('hidden');
-  
-  // Return to Standalone Privacy Auth Gateway
-  document.getElementById('mainAppView').classList.add('hidden');
-  document.getElementById('authGatewayView').classList.remove('hidden');
-  showLiveBroadcast("Signed out of OpenFlow Work OS. Privacy lock engaged.");
-}
 
 // 5. USER DATABASE MODAL MANAGEMENT
 async function openUserDatabaseModal() {
