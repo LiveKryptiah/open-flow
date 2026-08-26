@@ -5,6 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OpenFlow Work OS • Security Authentication Gateway</title>
   
+  <!-- Instant Synchronous Zero-Flash Theme Resolver -->
+  <script>
+    (function() {
+      try {
+        const theme = localStorage.getItem('openflow_theme') || 'dark';
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+          document.documentElement.style.backgroundColor = '#0f0f12';
+          document.documentElement.style.colorScheme = 'dark';
+        } else {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.style.backgroundColor = '#f8fafc';
+          document.documentElement.style.colorScheme = 'light';
+        }
+      } catch(e) {}
+    })();
+  </script>
+  
   <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -50,7 +68,7 @@
     })();
   </script>
 </head>
-<body class="min-h-screen flex flex-col antialiased bg-slate-50 dark:bg-[#0f0f12] text-slate-900 dark:text-slate-100 transition-colors duration-200">
+<body class="min-h-screen flex flex-col antialiased bg-slate-50 dark:bg-[#0f0f12] text-slate-900 dark:text-slate-100">
 
   <!-- Ambient Background Lighting -->
   <div class="fixed -top-40 -left-40 w-96 h-96 bg-blue-500/10 dark:bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
