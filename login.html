@@ -128,22 +128,22 @@
         <form id="gateLoginForm" onsubmit="event.preventDefault(); executeLogin();" class="space-y-4 text-xs">
           <div>
             <label for="gateLoginEmail" class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
-            <div class="relative">
-              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon-left">
                 <i data-lucide="mail" class="w-4 h-4"></i>
               </span>
-              <input id="gateLoginEmail" type="email" required placeholder="name@company.com" class="w-full pl-9 pr-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:ring-1 focus:ring-slate-400">
+              <input id="gateLoginEmail" type="email" required placeholder="name@company.com" class="auth-input-field border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:ring-1 focus:ring-slate-400">
             </div>
           </div>
 
           <div>
             <label for="gateLoginPassword" class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Password</label>
-            <div class="relative">
-              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon-left">
                 <i data-lucide="lock" class="w-4 h-4"></i>
               </span>
-              <input id="gateLoginPassword" type="password" required placeholder="••••••••" class="w-full pl-9 pr-10 py-2 border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-slate-400">
-              <button type="button" onclick="togglePasswordVisibility('gateLoginPassword')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" title="Toggle password visibility">
+              <input id="gateLoginPassword" type="password" required placeholder="••••••••" class="auth-input-field border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-slate-400">
+              <button type="button" onclick="togglePasswordVisibility('gateLoginPassword')" class="auth-input-icon-right" title="Toggle password visibility">
                 <i data-lucide="eye" class="w-4 h-4"></i>
               </button>
             </div>
@@ -196,43 +196,43 @@
         <form id="gateRegisterForm" onsubmit="event.preventDefault(); executeRegister();" class="space-y-3 text-xs hidden">
           <div>
             <label for="gateRegFullName" class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name *</label>
-            <div class="relative">
-              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon-left">
                 <i data-lucide="user" class="w-4 h-4"></i>
               </span>
-              <input id="gateRegFullName" type="text" required placeholder="e.g. Maria Santos" class="w-full pl-9 pr-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 font-medium focus:outline-none">
+              <input id="gateRegFullName" type="text" required placeholder="e.g. Maria Santos" class="auth-input-field border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 font-medium focus:outline-none">
             </div>
           </div>
 
           <div>
             <label for="gateRegEmail" class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Email Address *</label>
-            <div class="relative">
-              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon-left">
                 <i data-lucide="mail" class="w-4 h-4"></i>
               </span>
-              <input id="gateRegEmail" type="email" required placeholder="name@company.com" class="w-full pl-9 pr-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 focus:outline-none">
+              <input id="gateRegEmail" type="email" required placeholder="name@company.com" class="auth-input-field border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 focus:outline-none">
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-2.5">
             <div>
               <label for="gateRegPassword" class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Password *</label>
-              <input id="gateRegPassword" type="password" required placeholder="••••••••" class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 focus:outline-none">
+              <input id="gateRegPassword" type="password" required placeholder="••••••••" class="auth-input-field-no-icon border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 focus:outline-none">
             </div>
             <div>
               <label for="gateRegConfirmPassword" class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Confirm Password *</label>
-              <input id="gateRegConfirmPassword" type="password" required placeholder="••••••••" class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 focus:outline-none">
+              <input id="gateRegConfirmPassword" type="password" required placeholder="••••••••" class="auth-input-field-no-icon border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 focus:outline-none">
             </div>
           </div>
 
           <div>
             <label for="gateRegOrg" class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Department / Organization *</label>
-            <input id="gateRegOrg" type="text" required placeholder="e.g. Core Engineering, Kryptiah" class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 focus:outline-none">
+            <input id="gateRegOrg" type="text" required placeholder="e.g. Core Engineering, Kryptiah" class="auth-input-field-no-icon border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 focus:outline-none">
           </div>
 
           <div>
             <label for="gateRegRole" class="block font-medium text-slate-700 dark:text-slate-300 mb-1">Assigned Role & Permissions *</label>
-            <select id="gateRegRole" class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 font-medium focus:outline-none">
+            <select id="gateRegRole" class="auth-input-field-no-icon border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 font-medium focus:outline-none">
               <option value="admin" selected>Lead Administrator (Full Admin)</option>
               <option value="dept_head">Department Lead (Editor)</option>
               <option value="inspector">QA & Security Inspector (Approver)</option>
