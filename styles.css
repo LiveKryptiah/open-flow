@@ -1,17 +1,27 @@
+/* Harmonized Typography for Digits & Numerals (Matches 'August 2026' Geist Sans Font) */
+body, input, button, select, textarea,
+.digit-badge,
+.avatar-badge,
+.status-badge,
+.priority-badge,
+.tag-badge,
+.sidebar-text,
+table.work-table td,
+table.work-table th,
+input[type="number"],
+input[type="date"] {
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-feature-settings: "tnum" 1, "cv01" 1 !important;
+}
 
-/* Crisp, Readable Iconography & Digit Typography */
+/* Crisp icon stroke width */
 svg.lucide,
 [data-lucide] {
   stroke-width: 1.75 !important;
 }
 
-/* Clear, balanced digit & avatar badges */
-.digit-badge,
-.avatar-badge {
-  font-family: 'Geist Mono', 'Geist', monospace !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.01em !important;
-}
+
+
 
 /* ==========================================================================
    AUTH & LOGIN INPUT FIELD GEOMETRY (PREVENTS ICON OVERLAPPING)

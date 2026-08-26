@@ -1222,7 +1222,7 @@ async function refreshUsersTable() {
                 <span>${u.full_name}</span>
                 ${isCurrent ? '<span class="text-[9px] bg-slate-200 dark:bg-zinc-700 text-slate-700 dark:text-zinc-300 px-1 rounded font-bold">YOU</span>' : ''}
               </div>
-              <div class="text-[11px] text-slate-500 font-mono">${u.email}</div>
+              <div class="text-[11px] text-slate-500 ">${u.email}</div>
             </td>
             <td class="p-3 font-medium text-slate-700">${u.organization || 'General Org'}</td>
             <td class="p-3">
@@ -1400,7 +1400,7 @@ async function renderPlannerView() {
         </div>
 
         <div class="flex items-center gap-2 text-xs">
-          <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#27272a] text-slate-700 dark:text-slate-300 font-mono text-[11px] font-semibold border border-slate-200 dark:border-[#38383e] flex items-center gap-1.5">
+          <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#27272a] text-slate-700 dark:text-slate-300  text-[11px] font-semibold border border-slate-200 dark:border-[#38383e] flex items-center gap-1.5">
             <i data-lucide="database" class="w-3.5 h-3.5 text-slate-900 dark:text-slate-100"></i> SQLite Auto-save
           </span>
           <span id="plannerSaveStatus" class="font-medium text-slate-500 dark:text-slate-400 text-[11px]">Auto-saved</span>
@@ -1425,11 +1425,11 @@ async function renderPlannerView() {
               <button type="button" onclick="insertNoteBullet()" class="px-2 py-1 bg-slate-100 dark:bg-[#27272a] hover:bg-slate-200 dark:hover:bg-[#38383e] rounded-lg text-[11px] font-semibold text-slate-700 dark:text-slate-300 transition-colors">
                 • Bullet
               </button>
-              <span id="plannerCharCount" class="font-mono text-[10px] text-slate-400 pl-1">0 chars</span>
+              <span id="plannerCharCount" class=" text-[10px] text-slate-400 pl-1">0 chars</span>
             </div>
           </div>
 
-          <textarea id="plannerNotesTextarea" oninput="handlePlannerNoteInput()" rows="22" placeholder="Write project architecture notes, meeting minutes, acceptance criteria, or ideas here... Changes auto-save instantly to SQLite." class="w-full flex-1 p-4 rounded-xl border border-slate-200 dark:border-[#27272a] bg-slate-50/60 dark:bg-[#121214] text-slate-900 dark:text-slate-100 text-xs font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-600 resize-none"></textarea>
+          <textarea id="plannerNotesTextarea" oninput="handlePlannerNoteInput()" rows="22" placeholder="Write project architecture notes, meeting minutes, acceptance criteria, or ideas here... Changes auto-save instantly to SQLite." class="w-full flex-1 p-4 rounded-xl border border-slate-200 dark:border-[#27272a] bg-slate-50/60 dark:bg-[#121214] text-slate-900 dark:text-slate-100 text-xs  leading-relaxed focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-600 resize-none"></textarea>
         </div>
 
         <!-- RIGHT COLUMN (5 Cols): Sprint & Daily Action Items -->
@@ -1604,11 +1604,11 @@ async function renderFinanceView() {
           <!-- Quick Preset Deal Value Selectors -->
           <div class="flex items-center gap-1.5 flex-wrap">
             <span class="text-[10px] uppercase font-bold text-slate-400 mr-1">Deal Presets:</span>
-            <button type="button" onclick="setSellingPricePreset(500000)" class="px-2 py-1 rounded-lg text-[10px] font-mono font-bold bg-slate-100 dark:bg-[#27272a] hover:bg-slate-200 dark:hover:bg-[#38383e] text-black dark:text-white transition-colors">₱500K</button>
-            <button type="button" onclick="setSellingPricePreset(1000000)" class="px-2 py-1 rounded-lg text-[10px] font-mono font-bold bg-slate-100 dark:bg-[#27272a] hover:bg-slate-200 dark:hover:bg-[#38383e] text-black dark:text-white transition-colors">₱1.0M</button>
-            <button type="button" onclick="setSellingPricePreset(1500000)" class="px-2 py-1 rounded-lg text-[10px] font-mono font-bold bg-slate-900 dark:bg-[#27272a] text-white dark:text-white transition-colors">₱1.5M</button>
-            <button type="button" onclick="setSellingPricePreset(2500000)" class="px-2 py-1 rounded-lg text-[10px] font-mono font-bold bg-slate-100 dark:bg-[#27272a] hover:bg-slate-200 dark:hover:bg-[#38383e] text-black dark:text-white transition-colors">₱2.5M</button>
-            <button type="button" onclick="setSellingPricePreset(5000000)" class="px-2 py-1 rounded-lg text-[10px] font-mono font-bold bg-slate-100 dark:bg-[#27272a] hover:bg-slate-200 dark:hover:bg-[#38383e] text-black dark:text-white transition-colors">₱5.0M</button>
+            <button type="button" onclick="setSellingPricePreset(500000)" class="px-2 py-1 rounded-lg text-[10px] font-semibold bg-slate-100 dark:bg-[#27272a] hover:bg-slate-200 dark:hover:bg-[#38383e] text-black dark:text-white transition-colors">₱500K</button>
+            <button type="button" onclick="setSellingPricePreset(1000000)" class="px-2 py-1 rounded-lg text-[10px] font-semibold bg-slate-100 dark:bg-[#27272a] hover:bg-slate-200 dark:hover:bg-[#38383e] text-black dark:text-white transition-colors">₱1.0M</button>
+            <button type="button" onclick="setSellingPricePreset(1500000)" class="px-2 py-1 rounded-lg text-[10px] font-semibold bg-slate-900 dark:bg-[#27272a] text-white dark:text-white transition-colors">₱1.5M</button>
+            <button type="button" onclick="setSellingPricePreset(2500000)" class="px-2 py-1 rounded-lg text-[10px] font-semibold bg-slate-100 dark:bg-[#27272a] hover:bg-slate-200 dark:hover:bg-[#38383e] text-black dark:text-white transition-colors">₱2.5M</button>
+            <button type="button" onclick="setSellingPricePreset(5000000)" class="px-2 py-1 rounded-lg text-[10px] font-semibold bg-slate-100 dark:bg-[#27272a] hover:bg-slate-200 dark:hover:bg-[#38383e] text-black dark:text-white transition-colors">₱5.0M</button>
           </div>
         </div>
 
@@ -1617,23 +1617,23 @@ async function renderFinanceView() {
           <div class="space-y-1.5">
             <label class="text-[11px] font-bold text-slate-700 dark:text-slate-300">System Selling Price (₱)</label>
             <div class="relative">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 font-mono font-bold text-slate-500 dark:text-slate-400 pointer-events-none select-none z-10">₱</span>
-              <input type="number" id="systemSellingPriceInput" value="${sellingPrice}" oninput="handleSellingPriceLive(this.value)" style="padding-left: 2.25rem !important;" class="currency-input-field w-full pr-3 py-2.5 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-black dark:text-white font-mono font-extrabold text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 font-semibold text-slate-500 dark:text-slate-400 pointer-events-none select-none z-10">₱</span>
+              <input type="number" id="systemSellingPriceInput" value="${sellingPrice}" oninput="handleSellingPriceLive(this.value)" style="padding-left: 2.25rem !important;" class="currency-input-field w-full pr-3 py-2.5 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-black dark:text-white font-bold text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
             </div>
           </div>
 
           <div class="space-y-1.5">
             <label class="text-[11px] font-bold text-slate-700 dark:text-slate-300">Collected / Invoiced Deal (₱)</label>
             <div class="relative">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 font-mono font-bold text-slate-500 dark:text-slate-400 pointer-events-none select-none z-10">₱</span>
-              <input type="number" id="collectedAmountInput" value="${collectedAmt}" oninput="handleCollectedLive(this.value)" style="padding-left: 2.25rem !important;" class="currency-input-field w-full pr-3 py-2.5 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-black dark:text-white font-mono font-extrabold text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 font-semibold text-slate-500 dark:text-slate-400 pointer-events-none select-none z-10">₱</span>
+              <input type="number" id="collectedAmountInput" value="${collectedAmt}" oninput="handleCollectedLive(this.value)" style="padding-left: 2.25rem !important;" class="currency-input-field w-full pr-3 py-2.5 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-black dark:text-white font-bold text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
             </div>
           </div>
 
           <div class="space-y-1.5">
             <label class="text-[11px] font-bold text-slate-700 dark:text-slate-300">Company Reserve & Overhead (%)</label>
             <div class="relative">
-              <input type="number" id="overheadReservePctInput" value="${reservePct}" step="0.5" min="0" max="50" oninput="handleReserveLive(this.value)" class="w-full px-3 py-2.5 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-black dark:text-white font-mono font-extrabold text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
+              <input type="number" id="overheadReservePctInput" value="${reservePct}" step="0.5" min="0" max="50" oninput="handleReserveLive(this.value)" class="w-full px-3 py-2.5 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-black dark:text-white font-bold text-sm focus:outline-none focus:ring-2 focus:ring-slate-400">
             </div>
           </div>
         </div>
@@ -1642,17 +1642,17 @@ async function renderFinanceView() {
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-[#202024] border border-slate-200 dark:border-[#27272a] space-y-1">
             <div class="text-[10px] uppercase font-bold text-slate-400">Total System Contract Sold</div>
-            <div id="displaySellingPrice" class="text-xl font-mono font-extrabold text-black dark:text-white">${fmtMoney(sellingPrice)}</div>
+            <div id="displaySellingPrice" class="text-xl font-bold text-black dark:text-white">${fmtMoney(sellingPrice)}</div>
             <div class="text-[10px] text-slate-500">Gross contract revenue</div>
           </div>
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-[#202024] border border-slate-200 dark:border-[#27272a] space-y-1">
             <div class="text-[10px] uppercase font-bold text-slate-400">Company Reserve (${reservePct}%)</div>
-            <div id="displayReserveAmt" class="text-xl font-mono font-extrabold text-black dark:text-white">${fmtMoney(reserveAmt)}</div>
+            <div id="displayReserveAmt" class="text-xl font-bold text-black dark:text-white">${fmtMoney(reserveAmt)}</div>
             <div class="text-[10px] text-slate-500">Infrastructure & contingency fund</div>
           </div>
           <div class="p-4 rounded-xl bg-slate-50 dark:bg-[#202024] border border-slate-200 dark:border-[#27272a] space-y-1">
             <div class="text-[10px] uppercase font-bold text-slate-400">Net Team Distributable Salary Pool</div>
-            <div id="displayDistributablePool" class="text-xl font-mono font-extrabold text-black dark:text-white">${fmtMoney(distributablePool)}</div>
+            <div id="displayDistributablePool" class="text-xl font-bold text-black dark:text-white">${fmtMoney(distributablePool)}</div>
             <div class="text-[10px] text-slate-500">${100 - reservePct}% net profit pool for team</div>
           </div>
         </div>
@@ -1676,7 +1676,7 @@ async function renderFinanceView() {
           </div>
           
           <div class="flex items-center gap-3">
-            <span class="text-xs font-mono font-bold ${totalSharePct === 100 ? 'text-black dark:text-white' : 'text-rose-500'}">
+            <span class="text-xs font-semibold ${totalSharePct === 100 ? 'text-black dark:text-white' : 'text-rose-500'}">
               Total Share: ${totalSharePct}% / 100%
             </span>
             <button type="button" onclick="saveRevenueSharingSettings()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-[#27272a] dark:hover:bg-[#38383e] text-white dark:text-white rounded-lg text-xs font-semibold shadow-2xs transition-colors flex items-center gap-1">
@@ -1709,7 +1709,7 @@ async function renderFinanceView() {
                   <tr class="hover:bg-slate-50/50 dark:hover:bg-[#202024]/50 transition-colors">
                     <td class="p-3.5 pl-4">
                       <div class="flex items-center gap-2.5">
-                        <div class="w-7 h-7 rounded-full bg-slate-100 dark:bg-[#27272a] text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-[#38383e] font-medium text-xs flex items-center justify-center font-mono">
+                        <div class="w-7 h-7 rounded-full bg-slate-100 dark:bg-[#27272a] text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-[#38383e] font-medium text-xs flex items-center justify-center ">
                           ${s.member_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                         </div>
                         <div>
@@ -1717,7 +1717,7 @@ async function renderFinanceView() {
                             <span>${s.member_name}</span>
                             ${s.email && s.email.includes('@') && !s.email.includes('@system') ? '<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">Verified Account</span>' : ''}
                           </div>
-                          <div class="text-[10px] text-slate-400 font-mono">${s.email || 'internal@account'}</div>
+                          <div class="text-[10px] text-slate-400 ">${s.email || 'internal@account'}</div>
                         </div>
                       </div>
                     </td>
@@ -1725,12 +1725,12 @@ async function renderFinanceView() {
                       ${s.role || 'Contributor'}
                     </td>
                     <td class="p-3.5 text-center">
-                      <div class="inline-flex items-center gap-1 font-mono font-bold text-black dark:text-white">
-                        <input type="number" value="${s.percentage}" min="0" max="100" step="0.5" onchange="updateMemberSharePct('${s.id}', this.value)" class="w-16 px-2 py-1 border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#121214] text-black dark:text-white font-mono font-bold text-center focus:outline-none text-xs">
+                      <div class="inline-flex items-center gap-1 font-semibold text-black dark:text-white">
+                        <input type="number" value="${s.percentage}" min="0" max="100" step="0.5" onchange="updateMemberSharePct('${s.id}', this.value)" class="w-16 px-2 py-1 border border-slate-200 dark:border-[#38383e] rounded-lg bg-slate-50 dark:bg-[#121214] text-black dark:text-white font-semibold text-center focus:outline-none text-xs">
                         <span>%</span>
                       </div>
                     </td>
-                    <td class="p-3.5 text-right font-mono font-extrabold text-black dark:text-white text-sm">
+                    <td class="p-3.5 text-right font-bold text-black dark:text-white text-sm">
                       ${fmtMoney(memberSalary)}
                     </td>
                     <td class="p-3.5 text-center">
@@ -1755,8 +1755,8 @@ async function renderFinanceView() {
             <tfoot class="bg-slate-50 dark:bg-[#202024] font-bold text-xs border-t border-slate-200 dark:border-slate-800">
               <tr>
                 <td colspan="2" class="p-3.5 pl-4 text-black dark:text-white">Total Team Distribution</td>
-                <td class="p-3.5 text-center font-mono font-extrabold text-black dark:text-white">${totalSharePct}%</td>
-                <td class="p-3.5 text-right font-mono font-extrabold text-black dark:text-white">${fmtMoney(distributablePool)}</td>
+                <td class="p-3.5 text-center font-bold text-black dark:text-white">${totalSharePct}%</td>
+                <td class="p-3.5 text-right font-bold text-black dark:text-white">${fmtMoney(distributablePool)}</td>
                 <td colspan="3"></td>
               </tr>
             </tfoot>
@@ -1773,7 +1773,7 @@ async function renderFinanceView() {
             <i data-lucide="file-spreadsheet" class="w-4 h-4 text-slate-900 dark:text-slate-100"></i>
             <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Disbursement & Expense Ledger</h3>
           </div>
-          <span class="text-xs font-mono font-bold text-black dark:text-white">${items.length} Records</span>
+          <span class="text-xs font-semibold text-black dark:text-white">${items.length} Records</span>
         </div>
 
         <div class="overflow-x-auto">
@@ -1816,13 +1816,13 @@ async function renderFinanceView() {
                         ${it.category}
                       </span>
                     </td>
-                    <td class="p-3.5 text-right font-mono font-bold text-black dark:text-white">
+                    <td class="p-3.5 text-right font-semibold text-black dark:text-white">
                       ${fmtMoney(alloc)}
                     </td>
-                    <td class="p-3.5 text-right font-mono font-bold text-black dark:text-white">
+                    <td class="p-3.5 text-right font-semibold text-black dark:text-white">
                       ${fmtMoney(sp)}
                     </td>
-                    <td class="p-3.5 text-right font-mono font-bold text-black dark:text-white">
+                    <td class="p-3.5 text-right font-semibold text-black dark:text-white">
                       ${variance >= 0 ? '+' : ''}${fmtMoney(variance)}
                     </td>
                     <td class="p-3.5 text-center">
@@ -1830,7 +1830,7 @@ async function renderFinanceView() {
                         ● ${it.status}
                       </span>
                     </td>
-                    <td class="p-3.5 font-mono text-[11px] font-medium text-black dark:text-white">
+                    <td class="p-3.5  text-[11px] font-medium text-black dark:text-white">
                       ${it.date || '—'}
                     </td>
                     <td class="p-3.5 text-center">
@@ -1845,9 +1845,9 @@ async function renderFinanceView() {
             <tfoot class="bg-slate-50 dark:bg-[#202024] font-bold text-xs border-t border-slate-200 dark:border-slate-800">
               <tr>
                 <td colspan="2" class="p-3.5 pl-4 text-black dark:text-white">Total Workspace Capex</td>
-                <td class="p-3.5 text-right font-mono font-extrabold text-black dark:text-white">${fmtMoney(totalAllocated)}</td>
-                <td class="p-3.5 text-right font-mono font-extrabold text-black dark:text-white">${fmtMoney(totalSpent)}</td>
-                <td class="p-3.5 text-right font-mono font-extrabold text-black dark:text-white">${fmtMoney(remainingBalance)}</td>
+                <td class="p-3.5 text-right font-bold text-black dark:text-white">${fmtMoney(totalAllocated)}</td>
+                <td class="p-3.5 text-right font-bold text-black dark:text-white">${fmtMoney(totalSpent)}</td>
+                <td class="p-3.5 text-right font-bold text-black dark:text-white">${fmtMoney(remainingBalance)}</td>
                 <td colspan="3"></td>
               </tr>
             </tfoot>
@@ -1923,7 +1923,7 @@ function openMemberPayslip(id) {
   if (!modal || !content) return;
 
   content.innerHTML = `
-    <div class="p-4 bg-slate-50 dark:bg-[#121214] rounded-xl border border-slate-200 dark:border-[#27272a] space-y-3 font-mono">
+    <div class="p-4 bg-slate-50 dark:bg-[#121214] rounded-xl border border-slate-200 dark:border-[#27272a] space-y-3 ">
       <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
         <span class="text-slate-400 uppercase text-[10px]">Recipient:</span>
         <span class="font-bold text-black dark:text-white">${member.member_name}</span>
@@ -2177,7 +2177,7 @@ function renderTableView() {
         <div class="flex items-center justify-between gap-1.5">
           <div class="flex items-center gap-1.5">
             <span class="text-slate-800 dark:text-white font-bold">${title}</span>
-            <span class="text-[9px] font-mono px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-[#27272a] text-slate-700 dark:text-slate-300 uppercase font-semibold border border-slate-300 dark:border-[#3f3f46]">${col.type}</span>
+            <span class="text-[9px]  px-1.5 py-0.5 rounded-md bg-slate-200 dark:bg-[#27272a] text-slate-700 dark:text-slate-300 uppercase font-semibold border border-slate-300 dark:border-[#3f3f46]">${col.type}</span>
           </div>
           ${!isPrimaryCol && !isAuditor ? `
             <button class="delete-col-btn opacity-0 group-hover/th:opacity-100 hover:text-slate-900 dark:hover:text-white text-slate-400 p-0.5 rounded transition-opacity" data-col-id="${col.id}" data-col-title="${col.title}" title="Delete Column from Schema">
@@ -2220,7 +2220,7 @@ function renderTableView() {
     // Render Rows
     filteredItems.forEach((item, index) => {
       html += `<tr class="hover:bg-slate-50/80 transition-colors group" data-row-id="${item.id}">`;
-      html += `<td class="p-3 text-center font-mono text-[11px] font-medium text-slate-400 select-none">${index + 1}</td>`;
+      html += `<td class="p-3 text-center text-xs font-medium text-slate-400 select-none">${index + 1}</td>`;
 
       activeColumnsConfig.forEach(col => {
         const val = item.data[col.id];
@@ -2263,10 +2263,10 @@ function renderTableView() {
           `;
         } else if (col.type === 'currency') {
           html += `
-            <div class="font-mono font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1">
+            <div class="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1">
               ${canEdit ? `
                 <span class="text-slate-400 select-none">₱</span>
-                <input type="number" class="w-full bg-transparent font-mono font-semibold text-slate-800 dark:text-slate-200 focus:outline-none inline-cell-input" 
+                <input type="number" class="w-full bg-transparent font-semibold text-slate-800 dark:text-slate-200 focus:outline-none inline-cell-input" 
                   value="${val || 0}" data-item-id="${item.id}" data-col-id="${col.id}">
               ` : `
                 <span>₱${Number(val || 0).toLocaleString()}</span>
@@ -2298,7 +2298,7 @@ function renderTableView() {
           const initial = val ? val.trim().charAt(0).toUpperCase() : 'U';
           html += `
             <div class="flex items-center gap-1.5 min-w-[200px]">
-              <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-[#27272a] text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-[#38383e] flex items-center justify-center font-medium text-[11px] font-mono flex-shrink-0 shadow-2xs">
+              <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-[#27272a] text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-[#38383e] flex items-center justify-center font-medium text-[11px]  flex-shrink-0 shadow-2xs">
                 ${initial}
               </div>
               ${canEdit ? `
@@ -2331,7 +2331,7 @@ function renderTableView() {
                 } rounded-full transition-all duration-300" style="width: ${progressVal}%"></div>
               </div>
               ${canEdit ? `
-                <select class="bg-slate-50 dark:bg-[#202024] font-mono text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer border border-slate-200 dark:border-[#38383e] hover:border-slate-400 dark:hover:border-slate-600 rounded-md px-1.5 py-0.5 inline-cell-input transition-colors"
+                <select class="bg-slate-50 dark:bg-[#202024]  text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer border border-slate-200 dark:border-[#38383e] hover:border-slate-400 dark:hover:border-slate-600 rounded-md px-1.5 py-0.5 inline-cell-input transition-colors"
                   data-item-id="${item.id}" data-col-id="${col.id}">
                   ${[0, 10, 20, 25, 30, 40, 50, 60, 65, 70, 75, 80, 85, 90, 95, 100].map(pct => `
                     <option value="${pct}" ${progressVal === pct ? 'selected' : ''} class="bg-white dark:bg-[#18181b] text-slate-900 dark:text-white">${pct}%</option>
@@ -2341,7 +2341,7 @@ function renderTableView() {
                   ` : ''}
                 </select>
               ` : `
-                <span class="font-mono text-xs font-semibold text-slate-700 dark:text-slate-300">${progressVal}%</span>
+                <span class=" text-xs font-semibold text-slate-700 dark:text-slate-300">${progressVal}%</span>
               `}
             </div>
           `;
@@ -2349,10 +2349,10 @@ function renderTableView() {
           html += `
             <div class="relative min-w-[140px]">
               ${canEdit ? `
-                <input type="date" class="w-full px-2.5 py-1 text-xs font-mono font-semibold text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-[#202024] border border-slate-200 dark:border-[#38383e] hover:border-slate-400 dark:hover:border-slate-600 rounded-lg focus:outline-none cursor-pointer inline-cell-input transition-colors" 
+                <input type="date" class="w-full px-2.5 py-1 text-xs font-semibold text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-[#202024] border border-slate-200 dark:border-[#38383e] hover:border-slate-400 dark:hover:border-slate-600 rounded-lg focus:outline-none cursor-pointer inline-cell-input transition-colors" 
                   value="${val || ''}" data-item-id="${item.id}" data-col-id="${col.id}">
               ` : `
-                <span class="font-mono text-xs font-semibold text-slate-700 dark:text-slate-300 px-2 py-1">${val || 'No date'}</span>
+                <span class=" text-xs font-semibold text-slate-700 dark:text-slate-300 px-2 py-1">${val || 'No date'}</span>
               `}
             </div>
           `;
@@ -2421,7 +2421,7 @@ function renderTableView() {
   activeColumnsConfig.slice(1).forEach(col => {
     if (col.type === 'progress' || col.id === 'col_progress') {
       html += `
-        <td class="p-3 font-mono font-bold text-slate-600 dark:text-zinc-400">
+        <td class="p-3 font-semibold text-slate-600 dark:text-zinc-400">
           Avg: ${avgProgress}%
         </td>
       `;
@@ -2531,7 +2531,7 @@ function renderKanbanView() {
           <i data-lucide="grab" class="w-3.5 h-3.5 text-blue-500"></i>
           <span>Drag and drop cards across columns to update workflow stages in real-time.</span>
         </div>
-        <span class="font-mono text-[11px]">${filteredItems.length} Total Features</span>
+        <span class=" text-[11px]">${filteredItems.length} Total Features</span>
       </div>
       <div class="flex gap-4 overflow-x-auto pb-4 custom-scrollbar w-full">
   `;
@@ -2591,14 +2591,14 @@ function renderKanbanView() {
                 <i data-lucide="user" class="w-3 h-3 text-slate-400"></i>
                 <span class="truncate">${dept.split('(')[0].trim()}</span>
               </span>
-              <span class="font-mono text-[10px] text-slate-400">${item.data.col_timeline || ''}</span>
+              <span class=" text-[10px] text-slate-400">${item.data.col_timeline || ''}</span>
             </div>
 
             <!-- Progress Bar -->
             <div class="space-y-1">
               <div class="flex justify-between text-[10px] text-slate-500 dark:text-slate-400 font-semibold">
                 <span>Progress</span>
-                <span class="font-mono font-bold text-slate-700 dark:text-slate-300">${progress}%</span>
+                <span class="font-semibold text-slate-700 dark:text-slate-300">${progress}%</span>
               </div>
               <div class="h-1.5 w-full bg-slate-100 dark:bg-[#2c2c32] rounded-full overflow-hidden">
                 <div class="h-full ${
@@ -2898,12 +2898,12 @@ function renderTimelineView() {
           ${desc ? `<p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">${desc}</p>` : ''}
           <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
             <span class="truncate max-w-[130px] font-medium text-slate-700 dark:text-slate-300">${dept}</span>
-            <span class="font-mono text-slate-700 dark:text-zinc-300 dark:text-slate-400 dark:text-zinc-400 font-semibold">${timeline}</span>
+            <span class="text-xs font-medium text-slate-700 dark:text-zinc-300 dark:text-slate-400 dark:text-zinc-400 font-semibold">${timeline}</span>
           </div>
           <div class="space-y-1">
             <div class="flex justify-between text-[10px] text-slate-400 font-medium">
               <span>Progress</span>
-              <span class="font-mono">${progress}%</span>
+              <span class="">${progress}%</span>
             </div>
             <div class="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
               <div class="h-full bg-black dark:bg-black text-white border border-slate-700 rounded-full" style="width: ${progress}%"></div>
@@ -3055,7 +3055,7 @@ function renderDashboardView() {
           <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Real-time roadmap tracking, feature delivery status, and system telemetry</p>
         </div>
         <div class="flex items-center gap-2">
-          <span class="px-3 py-1 rounded-full text-xs font-mono font-medium bg-white dark:bg-[#18181c] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-[#2c2c32] shadow-2xs flex items-center gap-2">
+          <span class="px-3 py-1 rounded-full text-xs  font-medium bg-white dark:bg-[#18181c] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-[#2c2c32] shadow-2xs flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             <span class="truncate max-w-[200px]">${projectName}</span>
           </span>
@@ -3074,7 +3074,7 @@ function renderDashboardView() {
             </div>
           </div>
           <div class="mt-4">
-            <div class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight font-mono">
+            <div class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight ">
               ${activeItems.length}
             </div>
             <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Total registered features</span>
@@ -3090,7 +3090,7 @@ function renderDashboardView() {
             </div>
           </div>
           <div class="mt-4">
-            <div class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight font-mono">
+            <div class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight ">
               ${inProgressCount}
             </div>
             <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Under active development</span>
@@ -3106,7 +3106,7 @@ function renderDashboardView() {
             </div>
           </div>
           <div class="mt-4">
-            <div class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight font-mono">
+            <div class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight ">
               ${reviewCount}
             </div>
             <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Awaiting verification</span>
@@ -3122,7 +3122,7 @@ function renderDashboardView() {
             </div>
           </div>
           <div class="mt-4">
-            <div class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight font-mono">
+            <div class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight ">
               ${completedCount}
             </div>
             <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Production delivered</span>
@@ -3135,7 +3135,7 @@ function renderDashboardView() {
       <div class="bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#27272a] rounded-2xl p-5 shadow-2xs space-y-3">
         <div class="flex items-center justify-between text-xs">
           <span class="font-bold text-slate-900 dark:text-white">Workspace Delivery Distribution</span>
-          <span class="font-mono text-slate-500 dark:text-slate-400 text-[11px]">${completedPct}% Overall Completion</span>
+          <span class=" text-slate-500 dark:text-slate-400 text-[11px]">${completedPct}% Overall Completion</span>
         </div>
         <div class="h-3 w-full bg-slate-100 dark:bg-[#222228] rounded-full overflow-hidden flex">
           <div style="width: ${completedPct}%" class="h-full bg-emerald-500 transition-all" title="Completed: ${completedCount} (${completedPct}%)"></div>
@@ -3161,7 +3161,7 @@ function renderDashboardView() {
               <h3 class="text-sm font-bold text-slate-900 dark:text-white">Feature Delivery & Progress Breakdown</h3>
               <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Live execution progress per feature item</p>
             </div>
-            <span class="text-xs font-mono font-medium text-slate-400 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-[#202024]">Top 8</span>
+            <span class="text-xs  font-medium text-slate-400 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-[#202024]">Top 8</span>
           </div>
   
           ${activeItems.length === 0 ? `
@@ -3183,9 +3183,9 @@ function renderDashboardView() {
                     <div class="flex items-center justify-between">
                       <div class="flex items-center gap-2 truncate max-w-[280px] sm:max-w-[340px]">
                         <span class="font-medium text-slate-800 dark:text-slate-200 truncate">${title}</span>
-                        <span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-100 dark:bg-[#27272a] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#38383e]">${dept}</span>
+                        <span class="text-[10px]  px-1.5 py-0.2 rounded bg-slate-100 dark:bg-[#27272a] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#38383e]">${dept}</span>
                       </div>
-                      <div class="flex items-center gap-2 font-mono">
+                      <div class="flex items-center gap-2 ">
                         <span class="text-[10px] status-badge ${stClass}">${status}</span>
                         <span class="text-slate-700 dark:text-slate-300 font-semibold w-10 text-right">${progress}%</span>
                       </div>
@@ -3215,7 +3215,7 @@ function renderDashboardView() {
                 </div>
                 <span>Active Schema Columns</span>
               </span>
-              <span class="font-mono font-bold text-slate-900 dark:text-white px-2.5 py-1 bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#38383e] rounded-lg">${activeColumnsConfig.length} Fields</span>
+              <span class="font-semibold text-slate-900 dark:text-white px-2.5 py-1 bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#38383e] rounded-lg">${activeColumnsConfig.length} Fields</span>
             </div>
 
             <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-[#202024] border border-slate-200/80 dark:border-[#2c2c32] rounded-xl text-slate-700 dark:text-slate-300">
@@ -3225,7 +3225,7 @@ function renderDashboardView() {
                 </div>
                 <span>Event Bus Automations</span>
               </span>
-              <span class="font-mono font-bold text-slate-900 dark:text-white px-2.5 py-1 bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#38383e] rounded-lg">${activeAutomations.filter(a => a.active).length} Active</span>
+              <span class="font-semibold text-slate-900 dark:text-white px-2.5 py-1 bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#38383e] rounded-lg">${activeAutomations.filter(a => a.active).length} Active</span>
             </div>
 
             <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-[#202024] border border-slate-200/80 dark:border-[#2c2c32] rounded-xl text-slate-700 dark:text-slate-300">
@@ -3235,7 +3235,7 @@ function renderDashboardView() {
                 </div>
                 <span>Cryptographic Audit Trail</span>
               </span>
-              <span class="font-mono font-bold text-slate-900 dark:text-white px-2.5 py-1 bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#38383e] rounded-lg">${activeAuditLogs.length} Events</span>
+              <span class="font-semibold text-slate-900 dark:text-white px-2.5 py-1 bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#38383e] rounded-lg">${activeAuditLogs.length} Events</span>
             </div>
 
             <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-[#202024] border border-slate-200/80 dark:border-[#2c2c32] rounded-xl text-slate-700 dark:text-slate-300">
@@ -3245,7 +3245,7 @@ function renderDashboardView() {
                 </div>
                 <span>Database Engine</span>
               </span>
-              <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">Turso Cloud</span>
+              <span class="font-semibold text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">Turso Cloud</span>
             </div>
           </div>
         </div>
@@ -3846,7 +3846,7 @@ function renderAutomationRecipes() {
           </span>
         </div>
 
-        <div class="text-[11px] text-slate-600 dark:text-slate-300 space-y-1 bg-white dark:bg-slate-950 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 font-mono">
+        <div class="text-[11px] text-slate-600 dark:text-slate-300 space-y-1 bg-white dark:bg-slate-950 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 ">
           <div class="text-slate-600 dark:text-zinc-400 dark:text-slate-600 dark:text-zinc-400 flex items-center gap-1.5"><i data-lucide="zap" class="w-3.5 h-3.5"></i> <span>IF: ${rule.trigger}</span></div>
           <div class="text-slate-600 dark:text-zinc-400 dark:text-slate-600 dark:text-zinc-400 flex items-center gap-1.5"><i data-lucide="arrow-right-circle" class="w-3.5 h-3.5"></i> <span>THEN: ${rule.action}</span></div>
         </div>
@@ -3894,22 +3894,22 @@ function renderAuditLogs() {
           <div class="flex items-center gap-1.5 font-bold text-slate-900">
             <i data-lucide="user" class="w-3.5 h-3.5 text-slate-500"></i>
             <span>${log.user}</span>
-            <span class="text-[10px] font-normal text-slate-500 font-mono">(${log.role})</span>
+            <span class="text-[10px] font-normal text-slate-500 ">(${log.role})</span>
           </div>
-          <span class="font-mono text-[10px] text-slate-400">${log.timestamp}</span>
+          <span class=" text-[10px] text-slate-400">${log.timestamp}</span>
         </div>
 
         <div class="text-[11px] text-slate-700">
           Modified <span class="font-semibold text-slate-700 dark:text-zinc-300">${log.field}</span> on <i>"${log.item_title}"</i>
         </div>
 
-        <div class="bg-white p-2 rounded-lg border border-slate-100 flex items-center gap-2 font-mono text-[11px]">
+        <div class="bg-white p-2 rounded-lg border border-slate-100 flex items-center gap-2  text-[11px]">
           <span class="text-slate-600 dark:text-zinc-400 line-through">${log.old_val || '(empty)'}</span>
           <span class="text-slate-400">→</span>
           <span class="text-slate-600 dark:text-zinc-400 font-semibold">${log.new_val}</span>
         </div>
 
-        <div class="text-[9px] font-mono text-slate-400 flex items-center justify-between">
+        <div class="text-[9px]  text-slate-400 flex items-center justify-between">
           <span>Schema: ${activeBoard.schema || currentTenantKey}</span>
           <span>Hash: ${log.hash}</span>
         </div>
@@ -4104,10 +4104,10 @@ function renderProjectManagerModal() {
               <div class="flex items-center gap-2 flex-wrap">
                 <h4 class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">${t.title}</h4>
                 ${activeBadge}
-                <span class="text-[10px] font-mono text-slate-500 dark:text-zinc-400 bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-zinc-700">${t.schema_name}</span>
+                <span class="text-[10px]  text-slate-500 dark:text-zinc-400 bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-zinc-700">${t.schema_name}</span>
               </div>
               ${t.description ? `<p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${t.description}</p>` : ''}
-              <div class="text-[10px] text-slate-400 font-mono flex items-center gap-1">
+              <div class="text-[10px] text-slate-400  flex items-center gap-1">
                 <i data-lucide="globe" class="w-3 h-3 text-slate-400"></i>
                 <span class="truncate">${webUrl}</span>
               </div>
@@ -4746,7 +4746,7 @@ async function executeLiveSqlQuery() {
     const json = await res.json();
     if (json.success) {
       if (json.rows.length === 0) {
-        wrapper.innerHTML = '<div class="text-amber-400 p-4 text-center font-mono">Query executed successfully. 0 rows returned.</div>';
+        wrapper.innerHTML = '<div class="text-amber-400 p-4 text-center ">Query executed successfully. 0 rows returned.</div>';
         return;
       }
 
@@ -4769,10 +4769,10 @@ async function executeLiveSqlQuery() {
       html += '</tbody></table>';
       wrapper.innerHTML = html;
     } else {
-      wrapper.innerHTML = `<div class="text-red-400 p-4 text-center font-mono">Error: ${json.error}</div>`;
+      wrapper.innerHTML = `<div class="text-red-400 p-4 text-center ">Error: ${json.error}</div>`;
     }
   } catch (err) {
-    wrapper.innerHTML = `<div class="text-red-400 p-4 text-center font-mono">Query error: ${err.message}</div>`;
+    wrapper.innerHTML = `<div class="text-red-400 p-4 text-center ">Query error: ${err.message}</div>`;
   }
 }
 
@@ -4978,7 +4978,7 @@ function renderProjectWorkspacesCards(tenants) {
                 <span class="truncate">${t.title}</span>
                 ${isCurrent ? '<span class="text-[10px] px-2 py-0.2 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/30 flex-shrink-0">Active</span>' : ''}
               </div>
-              <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono flex items-center gap-2">
+              <div class="text-[11px] text-slate-500 dark:text-slate-400  flex items-center gap-2">
                 <span>Schema: <b>${t.schema_name || t.tenant_id}</b></span>
                 <span>•</span>
                 <span class="text-blue-500 truncate">${webUrl}</span>
@@ -5442,23 +5442,23 @@ function renderDrawerComments(item) {
 
     // Format text with @mention badges and clickable links
     let formattedText = c.text || '';
-    formattedText = formattedText.replace(/@([a-zA-Z0-9_-]+)/g, '<span class="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold font-mono text-[11px]">@$1</span>');
-    formattedText = formattedText.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 font-mono underline hover:opacity-80 break-all inline-flex items-center gap-1"><i data-lucide="external-link" class="w-3 h-3"></i>$1</a>');
+    formattedText = formattedText.replace(/@([a-zA-Z0-9_-]+)/g, '<span class="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold  text-[11px]">@$1</span>');
+    formattedText = formattedText.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400  underline hover:opacity-80 break-all inline-flex items-center gap-1"><i data-lucide="external-link" class="w-3 h-3"></i>$1</a>');
 
     html += `
       <div class="p-3.5 bg-slate-50 dark:bg-[#202024] rounded-xl border border-slate-200/80 dark:border-[#2c2c32] space-y-2 text-xs group">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-[#27272a] text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-[#38383e] flex items-center justify-center font-medium text-[11px] font-mono">
+            <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-[#27272a] text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-[#38383e] flex items-center justify-center font-medium text-[11px] ">
               ${initial}
             </div>
             <div class="flex items-center gap-1.5">
               <span class="font-bold text-slate-900 dark:text-white">${author}</span>
-              <span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-200 dark:bg-[#38383e] text-slate-600 dark:text-slate-300 font-mono font-medium">${role}</span>
+              <span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-200 dark:bg-[#38383e] text-slate-600 dark:text-slate-300  font-medium">${role}</span>
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-[10px] text-slate-400 font-mono">${time}</span>
+            <span class="text-[10px] text-slate-400 ">${time}</span>
             <button type="button" onclick="deleteDrawerComment('${c.id}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-500 transition-opacity p-0.5" title="Delete comment">
               <i data-lucide="trash-2" class="w-3 h-3"></i>
             </button>
@@ -5572,10 +5572,10 @@ function renderDrawerActivity(item) {
             <i data-lucide="${icon}" class="w-3.5 h-3.5 ${iconColor}"></i>
             <span>${action}</span>
           </span>
-          <span class="text-[10px] text-slate-400 font-mono">${time}</span>
+          <span class="text-[10px] text-slate-400 ">${time}</span>
         </div>
         <p class="text-slate-600 dark:text-slate-300 pl-5 text-[11px] leading-relaxed">${log.details || 'Cell mutation persisted'}</p>
-        <div class="text-[10px] text-slate-400 font-mono pl-5">By: ${log.user || 'System'} (${log.role || 'Admin'})</div>
+        <div class="text-[10px] text-slate-400  pl-5">By: ${log.user || 'System'} (${log.role || 'Admin'})</div>
       </div>
     `;
   });
@@ -5613,7 +5613,7 @@ function renderDrawerAttachments(item) {
           </div>
           <div class="min-w-0 flex-1">
             <div class="font-bold text-slate-900 dark:text-white truncate">${att.name}</div>
-            <div class="text-[10px] text-slate-400 font-mono truncate">${att.url}</div>
+            <div class="text-[10px] text-slate-400  truncate">${att.url}</div>
           </div>
         </a>
         <button type="button" onclick="deleteDrawerAttachment('${att.id}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-500 p-1 transition-opacity" title="Remove attachment">
@@ -6094,7 +6094,7 @@ async function renderWebsiteShowcaseView() {
                 <h3 class="text-xs font-bold text-slate-900 dark:text-white truncate">
                   ${t.title || 'Untitled Project'}
                 </h3>
-                <a href="${webUrl}" target="_blank" rel="noreferrer" class="text-[10px] text-blue-600 dark:text-blue-400 hover:underline font-mono truncate block" title="${webUrl}">
+                <a href="${webUrl}" target="_blank" rel="noreferrer" class="text-[10px] text-blue-600 dark:text-blue-400 hover:underline  truncate block" title="${webUrl}">
                   ${webUrl.replace('https://', '')}
                 </a>
               </div>
@@ -6117,7 +6117,7 @@ async function renderWebsiteShowcaseView() {
                 <span class="w-2 h-2 rounded-full bg-yellow-500/80"></span>
                 <span class="w-2 h-2 rounded-full bg-green-500/80"></span>
               </div>
-              <div class="font-mono text-[9px] truncate max-w-[180px] bg-slate-900/60 px-2 py-0.2 rounded text-slate-300">
+              <div class=" text-[9px] truncate max-w-[180px] bg-slate-900/60 px-2 py-0.2 rounded text-slate-300">
                 ${webUrl}
               </div>
               <i data-lucide="lock" class="w-2.5 h-2.5 text-emerald-400"></i>
