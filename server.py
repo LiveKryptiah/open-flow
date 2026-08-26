@@ -1220,7 +1220,7 @@ class WorkOSHandler(http.server.SimpleHTTPRequestHandler):
                 ]
 
             cursor.execute(
-                "INSERT OR REPLACE INTO boards (id, tenant_id, title, description, schema_name, columns_config, website_url) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                "INSERT OR REPLACE INTO boards (id, tenant_id, title, description, schema_name, columns_config, website_url, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))",
                 (board_id, tenant_id, name, desc, schema_slug, json.dumps(custom_columns), website_url)
             )
             conn.commit()

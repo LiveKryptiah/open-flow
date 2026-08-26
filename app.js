@@ -4239,7 +4239,7 @@ async function handleCreateNewSchema(e) {
   const descInput = document.getElementById('newSchemaDesc') || document.getElementById('newSchemaDescInput');
 
   const name = nameInput ? nameInput.value.trim() : '';
-  const website = urlInput ? urlInput.value.trim() : '';
+  let website = urlInput ? urlInput.value.trim() : '';
   const desc = descInput ? descInput.value.trim() : 'Custom Project Workspace';
 
   if (!name) {
@@ -4247,7 +4247,11 @@ async function handleCreateNewSchema(e) {
     return;
   }
 
-  const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+  if (website && !website.startsWith('http://') && !website.startsWith('https://')) {
+    website = `https://${website}`;
+  }
+
+  const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '_') || `workspace_${Date.now()}`;
 
   try {
     const res = await fetch('/api/tenants', {
@@ -4260,6 +4264,7 @@ async function handleCreateNewSchema(e) {
         website_url: website
       })
     });
+    
     const json = await res.json();
     if (res.ok && json.success) {
       currentTenantKey = json.tenant.tenant_id;
@@ -4274,7 +4279,7 @@ async function handleCreateNewSchema(e) {
     }
   } catch (err) {
     console.error("Failed to create project:", err);
-    alert("Server connection error while creating project workspace.");
+    alert("Server error: " + (err.message || "Failed to create project workspace."));
   }
 }
 
