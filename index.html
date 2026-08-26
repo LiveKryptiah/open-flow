@@ -251,7 +251,7 @@
             <i data-lucide="layers" class="w-4 h-4"></i>
           </div>
           <div class="sidebar-text min-w-0 truncate">
-            <span class="text-sm font-extrabold tracking-tight text-slate-900 dark:text-white">OpenFlow</span>
+            <span class="text-sm font-semibold tracking-tight text-slate-900 dark:text-white">OpenFlow</span>
             <span class="text-[10px] ml-1 px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-[#27272a] text-slate-500 dark:text-slate-400 font-mono font-semibold">OS</span>
           </div>
         </div>
@@ -265,7 +265,7 @@
       <div class="p-3 border-b border-slate-100 dark:border-slate-800 space-y-2">
         <div class="sidebar-text flex items-center justify-between text-[11px] font-semibold text-slate-400 uppercase tracking-wider px-1">
           <span>Active Project</span>
-          <button type="button" onclick="openProjectManagerModal()" class="text-blue-600 dark:text-blue-400 hover:underline text-[10px] capitalize font-bold">Manage</button>
+          <button type="button" onclick="openProjectManagerModal()" class="text-blue-600 dark:text-blue-400 hover:underline text-[10px] capitalize font-medium">Manage</button>
         </div>
         <div class="flex items-center gap-1.5">
           <div class="relative flex-1 min-w-0">
@@ -284,36 +284,36 @@
         
         <!-- SECTION 1: VIEWS (PLANNER & WORK VIEWS) -->
         <div class="space-y-1">
-          <div class="sidebar-text text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2.5 mb-1.5">
+          <div class="sidebar-text text-[10px] font-medium text-slate-400 dark:text-zinc-500 uppercase tracking-wider px-2.5 mb-1.5">
             Workspace Views
           </div>
-          <button type="button" onclick="switchViewDirect('planner')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" data-view="planner" title="Workspace Planner & Notes View">
+          <button type="button" onclick="switchViewDirect('planner')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" data-view="planner" title="Workspace Planner & Notes View">
             <div class="flex items-center gap-2.5 min-w-0">
               <i data-lucide="notebook-pen" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
-              <span class="sidebar-text truncate font-bold text-slate-900 dark:text-white">Planner & Notes</span>
+              <span class="sidebar-text truncate">Planner & Notes</span>
             </div>
-            <span id="sidebarPlannerBadge" class="sidebar-text text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-[#38383e] text-slate-800 dark:text-slate-200 font-bold">0</span>
+            <span id="sidebarPlannerBadge" class="sidebar-text text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-[#38383e] text-slate-700 dark:text-slate-300 font-medium">0</span>
           </button>
-          <button type="button" onclick="switchViewDirect('finance')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" data-view="finance" title="Workspace Finance & Budget Ledger">
+          <button type="button" onclick="switchViewDirect('finance')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" data-view="finance" title="Workspace Finance & Budget Ledger">
             <div class="flex items-center gap-2.5 min-w-0">
               <i data-lucide="wallet" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
-              <span class="sidebar-text truncate font-bold text-slate-900 dark:text-white">Finance & Budget</span>
+              <span class="sidebar-text truncate">Finance & Budget</span>
             </div>
-            <span class="sidebar-text text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-[#27272a] text-emerald-600 dark:text-emerald-400 font-bold border border-slate-200 dark:border-[#38383e]">₱</span>
+            <span class="sidebar-text text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-[#27272a] text-emerald-600 dark:text-emerald-400 font-medium border border-slate-200 dark:border-[#38383e]">₱</span>
           </button>
-          <button type="button" onclick="switchViewDirect('table')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all active bg-slate-100 dark:bg-[#27272a] text-slate-900 dark:text-white" data-view="table">
+          <button type="button" onclick="switchViewDirect('table')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all active bg-slate-100 dark:bg-[#27272a] text-slate-900 dark:text-white" data-view="table">
             <i data-lucide="table-2" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
             <span class="sidebar-text truncate">Data Grid</span>
           </button>
-          <button type="button" onclick="switchViewDirect('kanban')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" data-view="kanban">
+          <button type="button" onclick="switchViewDirect('kanban')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" data-view="kanban">
             <i data-lucide="kanban" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
             <span class="sidebar-text truncate">Kanban Board</span>
           </button>
-          <button type="button" onclick="switchViewDirect('timeline')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" data-view="timeline">
+          <button type="button" onclick="switchViewDirect('timeline')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" data-view="timeline">
             <i data-lucide="calendar" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
             <span class="sidebar-text truncate">Delivery Timeline</span>
           </button>
-          <button type="button" onclick="switchViewDirect('dashboard')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" data-view="dashboard">
+          <button type="button" onclick="switchViewDirect('dashboard')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" data-view="dashboard">
             <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
             <span class="sidebar-text truncate">Executive Analytics</span>
           </button>
@@ -321,33 +321,33 @@
 
         <!-- SECTION 2: GOVERNANCE & TOOLS -->
         <div class="space-y-1">
-          <div class="sidebar-text text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2.5 mb-1.5">
+          <div class="sidebar-text text-[10px] font-medium text-slate-400 dark:text-zinc-500 uppercase tracking-wider px-2.5 mb-1.5">
             Tools & Governance
           </div>
           <!-- 2. Event-Driven Automations Engine -->
-          <button type="button" onclick="openAutomationsDrawer()" class="sidebar-nav-btn w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all">
+          <button type="button" onclick="openAutomationsDrawer()" class="sidebar-nav-btn w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all">
             <div class="flex items-center gap-2.5 min-w-0">
               <i data-lucide="zap" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
               <span class="sidebar-text truncate">Automations</span>
             </div>
-            <span id="sidebarAutoBadge" class="sidebar-text text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-[#38383e] text-slate-800 dark:text-slate-200 font-bold">0</span>
+            <span id="sidebarAutoBadge" class="sidebar-text text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-[#38383e] text-slate-700 dark:text-slate-300 font-medium">0</span>
           </button>
 
           <!-- 3. Immutable Audit Trail -->
-          <button type="button" onclick="openAuditTrailDrawer()" class="sidebar-nav-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all">
+          <button type="button" onclick="openAuditTrailDrawer()" class="sidebar-nav-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all">
             <i data-lucide="history" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
             <span class="sidebar-text truncate">Audit Trail</span>
           </button>
 
           <!-- 4. PostgreSQL JSONB & SQL Store -->
-          <button type="button" onclick="openDbInspectorModalDirect()" class="sidebar-nav-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all">
+          <button type="button" onclick="openDbInspectorModalDirect()" class="sidebar-nav-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all">
             <i data-lucide="database" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
             <span class="sidebar-text truncate">JSONB / SQL Store</span>
           </button>
 
 
           <!-- 6. User Management & Permissions -->
-          <button type="button" onclick="openUserDatabaseModal()" class="sidebar-nav-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all">
+          <button type="button" onclick="openUserDatabaseModal()" class="sidebar-nav-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all">
             <i data-lucide="users" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
             <span class="sidebar-text truncate">User Management</span>
           </button>
@@ -363,7 +363,7 @@
               SA
             </div>
             <div class="sidebar-text min-w-0 truncate">
-              <div id="sidebarUserName" class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">System Admin</div>
+              <div id="sidebarUserName" class="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">System Admin</div>
               <div id="sidebarUserRole" class="text-[10px] text-slate-400 capitalize truncate">Administrator</div>
             </div>
           </div>
