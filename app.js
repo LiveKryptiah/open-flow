@@ -571,15 +571,7 @@ async function executeGatewayRegister() {
 }
 
 function initEventListeners() {
-  document.addEventListener('click', (e) => {
-    const notifBtn = document.getElementById('notificationBellBtn');
-    const notifMenu = document.getElementById('notificationDropdownMenu');
-    if (notifMenu && !notifMenu.classList.contains('hidden')) {
-      if (!notifMenu.contains(e.target) && (!notifBtn || !notifBtn.contains(e.target))) {
-        closeNotificationDropdown();
-      }
-    }
-  });
+
   // 0. Theme initialization complete (handlers bound via inline onclick)
 
   // 1. Outside Click Dismissal for Dropdowns
@@ -6620,36 +6612,33 @@ function toggleNotificationDropdown(e) {
   const backdrop = document.getElementById('notificationBackdrop');
   if (!modal) return;
 
-  const isHidden = modal.classList.contains('hidden');
-
-  if (isHidden) {
+  if (modal.classList.contains('hidden')) {
     modal.classList.remove('hidden');
     renderNotificationFeed(currentNotificationFilter);
-    setTimeout(() => {
-      if (backdrop) backdrop.classList.remove('opacity-0');
-      if (panel) {
-        panel.classList.remove('opacity-0', 'translate-y-2', 'scale-95');
-        panel.classList.add('opacity-100', 'translate-y-0', 'scale-100');
-      }
-    }, 10);
+    if (backdrop) backdrop.classList.remove('opacity-0');
+    if (panel) {
+      panel.classList.remove('opacity-0', 'translate-y-2', 'scale-95');
+      panel.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+    }
   } else {
     closeNotificationDropdown();
   }
-  if (window.lucide) lucide.createIcons();
 }
 
 function closeNotificationDropdown() {
   const modal = document.getElementById('notificationDropdownMenu');
   const panel = document.getElementById('notificationPanel');
   const backdrop = document.getElementById('notificationBackdrop');
+  if (!modal) return;
+
   if (backdrop) backdrop.classList.add('opacity-0');
   if (panel) {
     panel.classList.remove('opacity-100', 'translate-y-0', 'scale-100');
     panel.classList.add('opacity-0', 'translate-y-2', 'scale-95');
   }
   setTimeout(() => {
-    if (modal) modal.classList.add('hidden');
-  }, 200);
+    modal.classList.add('hidden');
+  }, 150);
 }
 
 function closeAllHeaderDropdowns() {
