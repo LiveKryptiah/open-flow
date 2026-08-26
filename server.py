@@ -36,6 +36,134 @@ else:
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode("utf-8")).hexdigest()
 
+# =========================================================================
+# TURSO CLOUD SQLITE & LOCAL SQLITE UNIFIED DATABASE ADAPTER
+# =========================================================================
+
+class TursoClient:
+    def __init__(self, db_url, auth_token):
+        url = db_url.strip()
+        if url.startswith("libsql://"):
+            url = "https://" + url[len("libsql://"):]
+        elif not url.startswith("http://") and not url.startswith("https://"):
+            url = "https://" + url
+        self.base_url = url.rstrip("/")
+        self.auth_token = auth_token.strip() if auth_token else ""
+
+    def execute(self, sql, params=()):
+        pipeline_url = f"{self.base_url}/v2/pipeline"
+        args = []
+        for p in params:
+            if p is None:
+                args.append({"type": "null"})
+            elif isinstance(p, int):
+                args.append({"type": "integer", "value": str(p)})
+            elif isinstance(p, float):
+                args.append({"type": "float", "value": p})
+            elif isinstance(p, bytes):
+                import base64
+                args.append({"type": "blob", "base64": base64.b64encode(p).decode()})
+            else:
+                args.append({"type": "text", "value": str(p)})
+
+        payload = {
+            "requests": [
+                {
+                    "type": "execute",
+                    "stmt": {
+                        "sql": sql,
+                        "args": args
+                    }
+                },
+                {"type": "close"}
+            ]
+        }
+
+        req = urllib.request.Request(
+            pipeline_url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {self.auth_token}",
+                "Content-Type": "application/json"
+            },
+            method="POST"
+        )
+
+        try:
+            with urllib.request.urlopen(req, timeout=15) as res:
+                data = json.loads(res.read().decode("utf-8"))
+        except Exception as e:
+            print(f"[Turso HTTP Request Error]: {e}")
+            raise e
+
+        results = data.get("results", [])
+        if not results:
+            return []
+        
+        first = results[0]
+        if first.get("type") == "error":
+            err_msg = first.get("error", {}).get("message", "Unknown error")
+            raise Exception(f"Turso Error: {err_msg}")
+        
+        exec_res = first.get("response", {}).get("result", {})
+        cols = [c["name"] for c in exec_res.get("cols", [])]
+        rows = exec_res.get("rows", [])
+
+        out = []
+        for r in rows:
+            row_dict = {}
+            for i, col in enumerate(cols):
+                val_obj = r[i]
+                if val_obj.get("type") == "null":
+                    row_dict[col] = None
+                elif val_obj.get("type") == "integer":
+                    row_dict[col] = int(val_obj.get("value", 0))
+                elif val_obj.get("type") == "float":
+                    row_dict[col] = float(val_obj.get("value", 0.0))
+                else:
+                    row_dict[col] = val_obj.get("value")
+            out.append(row_dict)
+
+        return out
+
+class TursoCursor:
+    def __init__(self, client):
+        self.client = client
+        self.results = []
+        self.idx = 0
+        self.rowcount = 0
+
+    def execute(self, sql, params=()):
+        self.results = self.client.execute(sql, params)
+        self.idx = 0
+        self.rowcount = len(self.results)
+        return self
+
+    def fetchone(self):
+        if self.idx < len(self.results):
+            row = self.results[self.idx]
+            self.idx += 1
+            return row
+        return None
+
+    def fetchall(self):
+        res = self.results[self.idx:]
+        self.idx = len(self.results)
+        return res
+
+class TursoConnection:
+    def __init__(self, client):
+        self.client = client
+
+    def cursor(self):
+        return TursoCursor(self.client)
+
+    def commit(self):
+        pass
+
+    def close(self):
+        pass
+
 def ensure_db_ready():
     global DB_FILE
     if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
@@ -51,6 +179,15 @@ def ensure_db_ready():
             init_db()
 
 def get_db():
+    # 1. Check for Turso Database URL and Auth Token in Environment Variables
+    turso_url = os.environ.get("TURSO_DATABASE_URL") or os.environ.get("TURSO_URL") or os.environ.get("LIBSQL_URL") or os.environ.get("DATABASE_URL", "")
+    turso_token = os.environ.get("TURSO_AUTH_TOKEN") or os.environ.get("TURSO_TOKEN") or os.environ.get("LIBSQL_AUTH_TOKEN", "")
+
+    if turso_url and (turso_url.startswith("libsql://") or turso_url.startswith("http://") or turso_url.startswith("https://") or "turso.io" in turso_url):
+        client = TursoClient(turso_url, turso_token)
+        return TursoConnection(client)
+
+    # 2. Local SQLite Engine
     ensure_db_ready()
     conn = sqlite3.connect(DB_FILE, timeout=20.0)
     conn.row_factory = sqlite3.Row
