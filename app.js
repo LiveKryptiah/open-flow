@@ -5135,7 +5135,7 @@ window.handleDeleteSpecificProject = handleDeleteSpecificProject;
 
 
 // =========================================================================
-// 15. FEATURE DETAIL DRAWER: COMMENTS, SUB-TASKS & ATTACHMENTS CONTROLLER
+// 16. ADVANCED INTERACTIVE ROW DETAIL DRAWER (SUBTASKS, COMMENTS & ACTIVITY)
 // =========================================================================
 
 let activeDrawerItemId = null;
@@ -5176,9 +5176,10 @@ function openFeatureDetailDrawer(itemId) {
   if (timelineVal) timelineVal.textContent = item.data.col_timeline || '2026-12-31';
   if (progressVal) progressVal.textContent = `${item.data.col_progress || 0}%`;
 
-  // Render Tabs
+  // Render Tabs Content
   renderDrawerComments(item);
   renderDrawerSubtasks(item);
+  renderDrawerActivity(item);
   renderDrawerAttachments(item);
 
   switchDetailDrawerTab('comments');
@@ -5209,6 +5210,7 @@ function switchDetailDrawerTab(tab) {
   const tabBtns = {
     comments: document.getElementById('drawerTabCommentsBtn'),
     subtasks: document.getElementById('drawerTabSubtasksBtn'),
+    activity: document.getElementById('drawerTabActivityBtn'),
     attachments: document.getElementById('drawerTabAttachmentsBtn'),
     details: document.getElementById('drawerTabDetailsBtn')
   };
@@ -5216,6 +5218,7 @@ function switchDetailDrawerTab(tab) {
   const sections = {
     comments: document.getElementById('drawerCommentsSection'),
     subtasks: document.getElementById('drawerSubtasksSection'),
+    activity: document.getElementById('drawerActivitySection'),
     attachments: document.getElementById('drawerAttachmentsSection'),
     details: document.getElementById('drawerDetailsSection')
   };
@@ -5225,10 +5228,10 @@ function switchDetailDrawerTab(tab) {
     const s = sections[k];
     if (b) {
       if (k === tab) {
-        b.classList.add('active', 'bg-white', 'dark:bg-[#2c2c32]', 'text-slate-900', 'dark:text-white', 'shadow-2xs');
+        b.classList.add('active', 'bg-white', 'dark:bg-[#27272a]', 'text-slate-900', 'dark:text-white', 'shadow-2xs');
         b.classList.remove('text-slate-600', 'dark:text-slate-400');
       } else {
-        b.classList.remove('active', 'bg-white', 'dark:bg-[#2c2c32]', 'text-slate-900', 'dark:text-white', 'shadow-2xs');
+        b.classList.remove('active', 'bg-white', 'dark:bg-[#27272a]', 'text-slate-900', 'dark:text-white', 'shadow-2xs');
         b.classList.add('text-slate-600', 'dark:text-slate-400');
       }
     }
@@ -5241,137 +5244,7 @@ function switchDetailDrawerTab(tab) {
   if (window.lucide) lucide.createIcons();
 }
 
-function openEditFeatureFromDrawer() {
-  if (!activeDrawerItemId) return;
-  const id = activeDrawerItemId;
-  closeFeatureDetailDrawer();
-  setTimeout(() => openEditFeatureModal(id), 260);
-}
-
-// --- COMMENTS STREAM CONTROLLERS ---
-
-function renderDrawerComments(item) {
-  const container = document.getElementById('drawerCommentsList');
-  const countPill = document.getElementById('drawerCommentCountPill');
-  if (!container) return;
-
-  const comments = item.data.comments || [];
-  if (countPill) countPill.textContent = comments.length;
-
-  if (comments.length === 0) {
-    container.innerHTML = `
-      <div class="py-8 text-center text-xs text-slate-400 space-y-2">
-        <i data-lucide="message-square-dashed" class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600"></i>
-        <p>No activity comments yet. Start the conversation below!</p>
-      </div>
-    `;
-    return;
-  }
-
-  let html = '';
-  comments.forEach(c => {
-    const isCurrent = currentUser && (c.user_name === currentUser.full_name || c.user_name === currentUser.email);
-    html += `
-      <div class="p-3.5 bg-slate-50 dark:bg-[#202024] rounded-xl border border-slate-200 dark:border-[#2c2c32] space-y-2 text-xs">
-        <div class="flex items-center justify-between gap-2">
-          <div class="flex items-center gap-2">
-            <div class="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center font-bold text-[10px]">
-              ${c.initials || 'US'}
-            </div>
-            <div>
-              <span class="font-bold text-slate-900 dark:text-white">${c.user_name}</span>
-              <span class="text-[10px] text-slate-400 font-mono ml-1.5">${c.timestamp || 'Just now'}</span>
-            </div>
-          </div>
-          ${isCurrent ? `
-            <button type="button" onclick="deleteDrawerComment('${c.id}')" class="text-slate-400 hover:text-red-500 p-1" title="Delete comment">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            </button>
-          ` : ''}
-        </div>
-        <div class="text-slate-700 dark:text-slate-200 whitespace-pre-wrap pl-8 leading-relaxed">
-          ${formatCommentText(c.text)}
-        </div>
-      </div>
-    `;
-  });
-
-  container.innerHTML = html;
-}
-
-function formatCommentText(text) {
-  if (!text) return '';
-  // Highlight @mentions in bold blue
-  return text.replace(/(@[a-zA-Z0-9_-]+)/g, '<span class="font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-1 py-0.2 rounded">$1</span>');
-}
-
-function insertMention(handle) {
-  const input = document.getElementById('drawerCommentInput');
-  if (!input) return;
-  input.value = `${input.value.trim()} ${handle} `.trimStart();
-  input.focus();
-}
-
-async function submitDrawerComment() {
-  if (!activeDrawerItemId) return;
-  const input = document.getElementById('drawerCommentInput');
-  const text = input ? input.value.trim() : '';
-  if (!text) return;
-
-  const btn = document.getElementById('postCommentBtn');
-  if (btn) btn.disabled = true;
-
-  try {
-    const res = await fetch('/api/items/comments', {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({
-        item_id: activeDrawerItemId,
-        tenant_id: currentTenantKey,
-        text: text
-      })
-    });
-    const json = await res.json();
-    if (json.success) {
-      const item = activeItems.find(i => i.id === activeDrawerItemId);
-      if (item) {
-        item.data.comments = json.comments;
-        renderDrawerComments(item);
-      }
-      if (input) input.value = '';
-      showLiveBroadcast(`Comment posted to feature discussion.`);
-      updateJsonbInspector();
-    }
-  } catch (err) {
-    console.error("Comment submit error:", err);
-  } finally {
-    if (btn) btn.disabled = false;
-    if (window.lucide) lucide.createIcons();
-  }
-}
-
-async function deleteDrawerComment(commentId) {
-  if (!activeDrawerItemId || !commentId) return;
-  try {
-    const res = await fetch(`/api/items/comments?item_id=${activeDrawerItemId}&comment_id=${commentId}`, {
-      method: 'DELETE',
-      headers: getAuthHeaders()
-    });
-    const json = await res.json();
-    if (json.success) {
-      const item = activeItems.find(i => i.id === activeDrawerItemId);
-      if (item && item.data.comments) {
-        item.data.comments = item.data.comments.filter(c => c.id !== commentId);
-        renderDrawerComments(item);
-      }
-      showLiveBroadcast(`Comment deleted.`);
-      if (window.lucide) lucide.createIcons();
-    }
-  } catch (err) {}
-}
-
-// --- CHECKLIST SUB-TASKS CONTROLLERS ---
-
+// 1. SUBTASKS CHECKLIST WITH LIVE PROGRESS COMPUTATION
 function renderDrawerSubtasks(item) {
   const container = document.getElementById('drawerSubtasksList');
   const countPill = document.getElementById('drawerSubtaskCountPill');
@@ -5391,7 +5264,7 @@ function renderDrawerSubtasks(item) {
     container.innerHTML = `
       <div class="py-6 text-center text-xs text-slate-400 space-y-1.5">
         <i data-lucide="list-checks" class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600"></i>
-        <p>No checklist sub-tasks added yet. Break down this feature below!</p>
+        <p>No subtasks added yet. Add checklist items below to track granular deliverables!</p>
       </div>
     `;
     return;
@@ -5400,14 +5273,14 @@ function renderDrawerSubtasks(item) {
   let html = '';
   subtasks.forEach(st => {
     html += `
-      <div class="p-3 bg-slate-50 dark:bg-[#202024] rounded-xl border border-slate-200 dark:border-[#2c2c32] flex items-center justify-between gap-3 text-xs">
+      <div class="p-3 bg-slate-50 dark:bg-[#202024] rounded-xl border border-slate-200 dark:border-[#2c2c32] flex items-center justify-between gap-3 text-xs group hover:border-slate-300 dark:hover:border-[#38383e] transition-all">
         <label class="flex items-center gap-2.5 flex-1 cursor-pointer select-none">
-          <input type="checkbox" onchange="toggleDrawerSubtask('${st.id}', this.checked)" ${st.completed ? 'checked' : ''} class="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-0 cursor-pointer">
-          <span class="${st.completed ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200 font-medium'} font-medium transition-all">
+          <input type="checkbox" onchange="toggleDrawerSubtask('${st.id}', this.checked)" ${st.completed ? 'checked' : ''} class="w-4 h-4 rounded border-slate-300 text-slate-900 dark:text-slate-100 focus:ring-0 cursor-pointer">
+          <span class="${st.completed ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200 font-medium'} transition-all">
             ${st.title}
           </span>
         </label>
-        <button type="button" onclick="deleteDrawerSubtask('${st.id}')" class="text-slate-400 hover:text-red-500 p-1" title="Delete subtask">
+        <button type="button" onclick="deleteDrawerSubtask('${st.id}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-500 p-1 transition-opacity" title="Delete subtask">
           <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
         </button>
       </div>
@@ -5438,13 +5311,34 @@ async function submitDrawerSubtask() {
       const item = activeItems.find(i => i.id === activeDrawerItemId);
       if (item) {
         item.data.subtasks = json.subtasks;
+        
+        // Auto-recalculate progress
+        const completedCount = json.subtasks.filter(st => st.completed).length;
+        const newProgress = Math.round((completedCount / json.subtasks.length) * 100);
+        item.data.col_progress = newProgress;
+        
+        // Sync progress to DB
+        fetch('/api/items', {
+          method: 'PUT',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            id: item.id,
+            tenant_id: currentTenantKey,
+            col_id: 'col_progress',
+            new_val: newProgress
+          })
+        }).catch(() => {});
+
         renderDrawerSubtasks(item);
+        renderCurrentView();
       }
       if (input) input.value = '';
       showLiveBroadcast(`Checklist subtask added.`);
       if (window.lucide) lucide.createIcons();
     }
-  } catch (err) {}
+  } catch (err) {
+    console.error('Subtask creation error:', err);
+  }
 }
 
 async function toggleDrawerSubtask(subtaskId, completed) {
@@ -5464,11 +5358,33 @@ async function toggleDrawerSubtask(subtaskId, completed) {
       const item = activeItems.find(i => i.id === activeDrawerItemId);
       if (item) {
         item.data.subtasks = json.subtasks;
+
+        // Auto-recalculate progress
+        const completedCount = json.subtasks.filter(st => st.completed).length;
+        const newProgress = Math.round((completedCount / json.subtasks.length) * 100);
+        item.data.col_progress = newProgress;
+
+        // Sync progress to DB
+        fetch('/api/items', {
+          method: 'PUT',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            id: item.id,
+            tenant_id: currentTenantKey,
+            col_id: 'col_progress',
+            new_val: newProgress
+          })
+        }).catch(() => {});
+
         renderDrawerSubtasks(item);
+        renderCurrentView();
+        showLiveBroadcast(`Subtask marked as ${completed ? 'completed ✓' : 'pending'}. Progress updated to ${newProgress}%.`);
       }
-      showLiveBroadcast(`Subtask marked as ${completed ? 'Completed' : 'Pending'}.`);
+      if (window.lucide) lucide.createIcons();
     }
-  } catch (err) {}
+  } catch (err) {
+    console.error('Error toggling subtask:', err);
+  }
 }
 
 async function deleteDrawerSubtask(subtaskId) {
@@ -5481,9 +5397,16 @@ async function deleteDrawerSubtask(subtaskId) {
     const json = await res.json();
     if (json.success) {
       const item = activeItems.find(i => i.id === activeDrawerItemId);
-      if (item && item.data.subtasks) {
-        item.data.subtasks = item.data.subtasks.filter(st => st.id !== subtaskId);
+      if (item) {
+        item.data.subtasks = json.subtasks;
+
+        const total = json.subtasks.length;
+        const completedCount = json.subtasks.filter(st => st.completed).length;
+        const newProgress = total > 0 ? Math.round((completedCount / total) * 100) : 0;
+        item.data.col_progress = newProgress;
+
         renderDrawerSubtasks(item);
+        renderCurrentView();
       }
       showLiveBroadcast(`Subtask deleted.`);
       if (window.lucide) lucide.createIcons();
@@ -5491,21 +5414,189 @@ async function deleteDrawerSubtask(subtaskId) {
   } catch (err) {}
 }
 
-// --- ATTACHMENTS & RESOURCES CONTROLLERS ---
+// 2. DISCUSSION STREAM WITH @MENTIONS & LINK HIGHLIGHTING
+function renderDrawerComments(item) {
+  const list = document.getElementById('drawerCommentsList');
+  const countPill = document.getElementById('drawerCommentCountPill');
+  if (!list) return;
 
-function renderDrawerAttachments(item) {
-  const container = document.getElementById('drawerAttachmentsList');
-  const countPill = document.getElementById('drawerAttachmentCountPill');
+  const comments = item.data.comments || [];
+  if (countPill) countPill.textContent = comments.length;
+
+  if (comments.length === 0) {
+    list.innerHTML = `
+      <div class="py-8 text-center text-xs text-slate-400 space-y-1.5">
+        <i data-lucide="message-square" class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600"></i>
+        <p>No discussion messages yet. Leave a status update or tag a teammate below!</p>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  comments.forEach(c => {
+    const author = c.author || 'Team Member';
+    const role = c.role || 'Member';
+    const time = c.timestamp ? new Date(c.timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'Recently';
+    const initial = author.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'U';
+
+    // Format text with @mention badges and clickable links
+    let formattedText = c.text || '';
+    formattedText = formattedText.replace(/@([a-zA-Z0-9_-]+)/g, '<span class="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-600 dark:text-blue-400 font-bold font-mono text-[11px]">@$1</span>');
+    formattedText = formattedText.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-400 font-mono underline hover:opacity-80 break-all inline-flex items-center gap-1"><i data-lucide="external-link" class="w-3 h-3"></i>$1</a>');
+
+    html += `
+      <div class="p-3.5 bg-slate-50 dark:bg-[#202024] rounded-xl border border-slate-200/80 dark:border-[#2c2c32] space-y-2 text-xs group">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-6 h-6 rounded-full bg-slate-900 dark:bg-[#27272a] text-white flex items-center justify-center font-bold text-[10px] font-mono">
+              ${initial}
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-slate-900 dark:text-white">${author}</span>
+              <span class="text-[9px] px-1.5 py-0.2 rounded bg-slate-200 dark:bg-[#38383e] text-slate-600 dark:text-slate-300 font-mono font-medium">${role}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] text-slate-400 font-mono">${time}</span>
+            <button type="button" onclick="deleteDrawerComment('${c.id}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-500 transition-opacity p-0.5" title="Delete comment">
+              <i data-lucide="trash-2" class="w-3 h-3"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="text-slate-800 dark:text-slate-200 leading-relaxed pl-8 break-words">
+          ${formattedText}
+        </div>
+      </div>
+    `;
+  });
+
+  list.innerHTML = html;
+}
+
+async function submitDrawerComment() {
+  if (!activeDrawerItemId) return;
+  const input = document.getElementById('drawerCommentInput');
+  const text = input ? input.value.trim() : '';
+  if (!text) return;
+
+  try {
+    const res = await fetch('/api/items/comments', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        item_id: activeDrawerItemId,
+        tenant_id: currentTenantKey,
+        text: text
+      })
+    });
+    const json = await res.json();
+    if (json.success) {
+      const item = activeItems.find(i => i.id === activeDrawerItemId);
+      if (item) {
+        item.data.comments = json.comments;
+        renderDrawerComments(item);
+        renderCurrentView();
+      }
+      if (input) input.value = '';
+      showLiveBroadcast(`Comment posted to discussion.`);
+      if (window.lucide) lucide.createIcons();
+    }
+  } catch (err) {
+    console.error('Error posting comment:', err);
+  }
+}
+
+async function deleteDrawerComment(commentId) {
+  if (!activeDrawerItemId) return;
+  try {
+    const res = await fetch(`/api/items/comments?item_id=${activeDrawerItemId}&comment_id=${commentId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    const json = await res.json();
+    if (json.success) {
+      const item = activeItems.find(i => i.id === activeDrawerItemId);
+      if (item) {
+        item.data.comments = json.comments;
+        renderDrawerComments(item);
+        renderCurrentView();
+      }
+      showLiveBroadcast(`Comment deleted.`);
+      if (window.lucide) lucide.createIcons();
+    }
+  } catch (err) {}
+}
+
+function insertMention(handle) {
+  const input = document.getElementById('drawerCommentInput');
+  if (!input) return;
+  input.value += (input.value ? ' ' : '') + handle + ' ';
+  input.focus();
+}
+
+// 3. ITEM ACTIVITY & AUDIT TRAIL STREAM
+function renderDrawerActivity(item) {
+  const container = document.getElementById('drawerActivityList');
   if (!container) return;
+
+  // Filter audit logs specifically related to this item
+  const relevantLogs = activeAuditLogs.filter(log => {
+    return log.row_id === item.id || 
+           (log.details && (log.details.includes(item.id) || log.details.includes(item.data.col_title)));
+  });
+
+  if (relevantLogs.length === 0) {
+    container.innerHTML = `
+      <div class="py-6 text-center text-xs text-slate-400 space-y-1.5">
+        <i data-lucide="history" class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600"></i>
+        <p>No logged mutations recorded for this item yet.</p>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  relevantLogs.slice(0, 15).forEach(log => {
+    const time = log.timestamp ? new Date(log.timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'Logged';
+    const action = log.action || 'MUTATION';
+
+    const icon = action === 'INSERT' ? 'plus-circle' : action === 'DELETE' ? 'trash' : 'edit-2';
+    const iconColor = action === 'INSERT' ? 'text-emerald-500' : action === 'DELETE' ? 'text-rose-500' : 'text-blue-500';
+
+    html += `
+      <div class="p-3 bg-slate-50 dark:bg-[#202024] rounded-xl border border-slate-200/80 dark:border-[#2c2c32] text-xs space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="flex items-center gap-1.5 font-bold text-slate-900 dark:text-white">
+            <i data-lucide="${icon}" class="w-3.5 h-3.5 ${iconColor}"></i>
+            <span>${action}</span>
+          </span>
+          <span class="text-[10px] text-slate-400 font-mono">${time}</span>
+        </div>
+        <p class="text-slate-600 dark:text-slate-300 pl-5 text-[11px] leading-relaxed">${log.details || 'Cell mutation persisted'}</p>
+        <div class="text-[10px] text-slate-400 font-mono pl-5">By: ${log.user || 'System'} (${log.role || 'Admin'})</div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+// 4. ATTACHMENTS & RESOURCES
+function renderDrawerAttachments(item) {
+  const list = document.getElementById('drawerAttachmentsList');
+  const countPill = document.getElementById('drawerAttachmentCountPill');
+  if (!list) return;
 
   const attachments = item.data.attachments || [];
   if (countPill) countPill.textContent = attachments.length;
 
   if (attachments.length === 0) {
-    container.innerHTML = `
+    list.innerHTML = `
       <div class="py-6 text-center text-xs text-slate-400 space-y-1.5">
-        <i data-lucide="folder-plus" class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600"></i>
-        <p>No document or web resources attached yet.</p>
+        <i data-lucide="paperclip" class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600"></i>
+        <p>No attached links or files. Link your Figma mockups, GitHub PRs, or documents below!</p>
       </div>
     `;
     return;
@@ -5513,31 +5604,26 @@ function renderDrawerAttachments(item) {
 
   let html = '';
   attachments.forEach(att => {
-    const iconName = att.file_type === 'figma' ? 'palette' : att.file_type === 'github' ? 'git-branch' : att.file_type === 'document' ? 'file-text' : 'link-2';
+    const icon = att.type === 'figma' ? 'layout' : att.type === 'github' ? 'git-pull-request' : att.type === 'document' ? 'file-text' : 'link';
     html += `
-      <div class="p-3 bg-slate-50 dark:bg-[#202024] rounded-xl border border-slate-200 dark:border-[#2c2c32] flex items-center justify-between gap-3 text-xs">
-        <div class="flex items-center gap-2.5 min-w-0">
-          <div class="w-7 h-7 rounded-lg bg-slate-200 dark:bg-[#2c2c32] flex items-center justify-center text-slate-700 dark:text-slate-300 flex-shrink-0">
-            <i data-lucide="${iconName}" class="w-4 h-4"></i>
+      <div class="p-3 bg-slate-50 dark:bg-[#202024] rounded-xl border border-slate-200 dark:border-[#2c2c32] flex items-center justify-between gap-3 text-xs group">
+        <a href="${att.url}" target="_blank" rel="noopener" class="flex items-center gap-2.5 flex-1 min-w-0 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          <div class="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="${icon}" class="w-3.5 h-3.5"></i>
           </div>
-          <div class="truncate">
+          <div class="min-w-0 flex-1">
             <div class="font-bold text-slate-900 dark:text-white truncate">${att.name}</div>
-            <div class="text-[10px] text-blue-500 font-mono truncate">${att.url}</div>
+            <div class="text-[10px] text-slate-400 font-mono truncate">${att.url}</div>
           </div>
-        </div>
-        <div class="flex items-center gap-1.5 flex-shrink-0">
-          <a href="${att.url}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 dark:bg-[#27272a] dark:hover:bg-[#38383e] text-white dark:text-white rounded-lg text-[11px] font-semibold flex items-center gap-1">
-            <i data-lucide="external-link" class="w-3 h-3"></i> Open
-          </a>
-          <button type="button" onclick="deleteDrawerAttachment('${att.id}')" class="text-slate-400 hover:text-red-500 p-1" title="Delete attachment">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-          </button>
-        </div>
+        </a>
+        <button type="button" onclick="deleteDrawerAttachment('${att.id}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-rose-500 p-1 transition-opacity" title="Remove attachment">
+          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+        </button>
       </div>
     `;
   });
 
-  container.innerHTML = html;
+  list.innerHTML = html;
 }
 
 async function submitDrawerAttachment() {
@@ -5573,7 +5659,7 @@ async function submitDrawerAttachment() {
       }
       if (nameInput) nameInput.value = '';
       if (urlInput) urlInput.value = '';
-      showLiveBroadcast(`Attachment '${name}' added to feature.`);
+      showLiveBroadcast(`Attachment linked.`);
       if (window.lucide) lucide.createIcons();
     }
   } catch (err) {}
@@ -5589,14 +5675,20 @@ async function deleteDrawerAttachment(attachmentId) {
     const json = await res.json();
     if (json.success) {
       const item = activeItems.find(i => i.id === activeDrawerItemId);
-      if (item && item.data.attachments) {
-        item.data.attachments = item.data.attachments.filter(a => a.id !== attachmentId);
+      if (item) {
+        item.data.attachments = json.attachments;
         renderDrawerAttachments(item);
       }
       showLiveBroadcast(`Attachment removed.`);
       if (window.lucide) lucide.createIcons();
     }
   } catch (err) {}
+}
+
+function openEditFeatureFromDrawer() {
+  if (!activeDrawerItemId) return;
+  closeFeatureDetailDrawer();
+  openEditModal(activeDrawerItemId);
 }
 
 // Window bindings

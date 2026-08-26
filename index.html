@@ -1089,23 +1089,27 @@ Automated Billing Engine,Completed,Admin,Critical,2026-09-01,100" class="w-full 
           </div>
 
           <!-- Drawer Navigation Tabs -->
-          <div class="flex items-center p-1 bg-slate-100 dark:bg-[#202024] rounded-xl text-xs font-semibold overflow-x-auto">
-            <button type="button" id="drawerTabCommentsBtn" onclick="switchDetailDrawerTab('comments')" class="flex-1 py-1.5 px-3 rounded-lg active bg-white dark:bg-[#27272a] text-slate-900 dark:text-white shadow-2xs transition-all flex items-center justify-center gap-1.5">
+          <div class="flex items-center p-1 bg-slate-100 dark:bg-[#202024] rounded-xl text-xs font-semibold overflow-x-auto gap-1">
+            <button type="button" id="drawerTabCommentsBtn" onclick="switchDetailDrawerTab('comments')" class="flex-1 py-1.5 px-2.5 rounded-lg active bg-white dark:bg-[#27272a] text-slate-900 dark:text-white shadow-2xs transition-all flex items-center justify-center gap-1.5">
               <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
               <span>Discussion</span>
               <span id="drawerCommentCountPill" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-[#3a3a42] font-bold">0</span>
             </button>
-            <button type="button" id="drawerTabSubtasksBtn" onclick="switchDetailDrawerTab('subtasks')" class="flex-1 py-1.5 px-3 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center gap-1.5">
+            <button type="button" id="drawerTabSubtasksBtn" onclick="switchDetailDrawerTab('subtasks')" class="flex-1 py-1.5 px-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center gap-1.5">
               <i data-lucide="check-square" class="w-3.5 h-3.5"></i>
               <span>Checklist</span>
               <span id="drawerSubtaskCountPill" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-[#3a3a42] font-bold">0/0</span>
             </button>
-            <button type="button" id="drawerTabAttachmentsBtn" onclick="switchDetailDrawerTab('attachments')" class="flex-1 py-1.5 px-3 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center gap-1.5">
+            <button type="button" id="drawerTabActivityBtn" onclick="switchDetailDrawerTab('activity')" class="flex-1 py-1.5 px-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="history" class="w-3.5 h-3.5"></i>
+              <span>Activity</span>
+            </button>
+            <button type="button" id="drawerTabAttachmentsBtn" onclick="switchDetailDrawerTab('attachments')" class="flex-1 py-1.5 px-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center gap-1.5">
               <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
-              <span>Attachments</span>
+              <span>Files</span>
               <span id="drawerAttachmentCountPill" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-[#3a3a42] font-bold">0</span>
             </button>
-            <button type="button" id="drawerTabDetailsBtn" onclick="switchDetailDrawerTab('details')" class="flex-1 py-1.5 px-3 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center gap-1.5">
+            <button type="button" id="drawerTabDetailsBtn" onclick="switchDetailDrawerTab('details')" class="flex-1 py-1.5 px-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center gap-1.5">
               <i data-lucide="info" class="w-3.5 h-3.5"></i>
               <span>Scope</span>
             </button>
@@ -1204,6 +1208,20 @@ Automated Billing Engine,Completed,Admin,Critical,2026-09-01,100" class="w-full 
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+
+                    <!-- TAB 5: ITEM SPECIFIC ACTIVITY TRAIL -->
+          <div id="drawerActivitySection" class="space-y-4 hidden">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+              <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                <i data-lucide="history" class="w-3.5 h-3.5 text-purple-500"></i>
+                <span>Task Mutation History</span>
+              </h4>
+              <span class="text-[10px] font-mono text-slate-400">Cryptographic audit log</span>
+            </div>
+            <div id="drawerActivityList" class="space-y-2.5">
+              <!-- Rendered dynamically -->
             </div>
           </div>
 
