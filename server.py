@@ -381,6 +381,25 @@ def get_auth_user(headers, query_params=None):
     return dict(user_row) if user_row else None
 
 class WorkOSHandler(http.server.SimpleHTTPRequestHandler):
+    def _get_request_path(self):
+        raw_parsed = urllib.parse.urlparse(self.path)
+        qs = urllib.parse.parse_qs(raw_parsed.query)
+
+        # 1. Check if route was passed in query parameter (e.g. from vercel.json rewrite)
+        if "route" in qs and qs["route"]:
+            subpath = qs["route"][0].lstrip("/")
+            return "/api/" + subpath, qs
+
+        # 2. Check x-matched-path / x-forwarded-uri header from Vercel Edge Proxy
+        forwarded = self.headers.get("x-matched-path") or self.headers.get("x-forwarded-uri") or self.headers.get("x-envoy-original-path")
+        if forwarded and not forwarded.startswith("/api/index"):
+            f_parsed = urllib.parse.urlparse(forwarded)
+            f_qs = urllib.parse.parse_qs(f_parsed.query)
+            combined_qs = {**qs, **f_qs}
+            return f_parsed.path, combined_qs
+
+        return raw_parsed.path, qs
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=BASE_DIR, **kwargs)
 
@@ -515,8 +534,9 @@ class WorkOSHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(html.encode("utf-8"))
 
     def do_GET(self):
+        req_path, query = self._get_request_path()
         parsed = urllib.parse.urlparse(self.path)
-        query = urllib.parse.parse_qs(parsed.query)
+        parsed = parsed._replace(path=req_path)
 
         # 1.5 API: Proxy Website to bypass X-Frame-Options restrictions
         if parsed.path == "/api/proxy-site":
@@ -1752,8 +1772,9 @@ class WorkOSHandler(http.server.SimpleHTTPRequestHandler):
         self._send_json_response({"error": "Endpoint not found"}, 404)
 
     def do_DELETE(self):
+        req_path, query = self._get_request_path()
         parsed = urllib.parse.urlparse(self.path)
-        query = urllib.parse.parse_qs(parsed.query)
+        parsed = parsed._replace(path=req_path)
 
         conn = get_db()
         cursor = conn.cursor()
