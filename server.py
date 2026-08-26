@@ -1177,8 +1177,8 @@ class WorkOSHandler(http.server.SimpleHTTPRequestHandler):
             data = body.get("data", {})
 
             cursor.execute(
-                "INSERT INTO items (id, tenant_id, board_id, data) VALUES (?, ?, ?, ?)",
-                (item_id, tenant_id, board_id, json.dumps(data))
+                "INSERT INTO items (id, tenant_id, data, created_at, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)",
+                (item_id, tenant_id, json.dumps(data))
             )
 
             title = data.get("col_title", "New Project")
