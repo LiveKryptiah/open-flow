@@ -1,0 +1,1016 @@
+.hidden { display: none !important; }
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* =========================================================================
+   MATERIAL DESIGN 3 (MATERIAL YOU) SEMANTIC DESIGN TOKENS
+   ========================================================================= */
+
+:root {
+  /* M3 Light Theme Tonal Color Palette */
+  --md-sys-color-primary: #18181b;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #f4f4f5;
+  --md-sys-color-on-primary-container: #09090b;
+
+  --md-sys-color-secondary: #52525b;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #f4f4f5;
+  --md-sys-color-on-secondary-container: #18181b;
+
+  --md-sys-color-tertiary: #3f3f46;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #e4e4e7;
+  --md-sys-color-on-tertiary-container: #18181b;
+
+  --md-sys-color-surface: #ffffff;
+  --md-sys-color-surface-dim: #f4f4f5;
+  --md-sys-color-surface-bright: #ffffff;
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #f8fafc;
+  --md-sys-color-surface-container: #f1f5f9;
+  --md-sys-color-surface-container-high: #e2e8f0;
+  --md-sys-color-surface-container-highest: #cbd5e1;
+
+  --md-sys-color-on-surface: #0f172a;
+  --md-sys-color-on-surface-variant: #64748b;
+  --md-sys-color-outline: #cbd5e1;
+  --md-sys-color-outline-variant: #e2e8f0;
+
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #410002;
+
+  --md-sys-color-success: #1b6d3a;
+  --md-sys-color-success-container: #dcfce7;
+  --md-sys-color-on-success-container: #14532d;
+
+  /* M3 Shape Tokens */
+  --md-sys-shape-xs: 4px;
+  --md-sys-shape-sm: 8px;
+  --md-sys-shape-md: 12px;
+  --md-sys-shape-lg: 16px;
+  --md-sys-shape-xl: 20px;
+  --md-sys-shape-2xl: 28px;
+  --md-sys-shape-full: 9999px;
+
+  /* M3 Elevation Levels */
+  --md-sys-elevation-0: none;
+  --md-sys-elevation-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.06), 0px 1px 2px 0px rgba(0, 0, 0, 0.04);
+  --md-sys-elevation-2: 0px 2px 6px 2px rgba(0, 0, 0, 0.06), 0px 1px 2px 0px rgba(0, 0, 0, 0.04);
+  --md-sys-elevation-3: 0px 4px 12px 3px rgba(0, 0, 0, 0.08), 0px 1px 3px 0px rgba(0, 0, 0, 0.04);
+  --md-sys-elevation-4: 0px 6px 16px 4px rgba(0, 0, 0, 0.10), 0px 2px 4px 0px rgba(0, 0, 0, 0.04);
+  --md-sys-elevation-5: 0px 8px 24px 6px rgba(0, 0, 0, 0.12), 0px 4px 8px 0px rgba(0, 0, 0, 0.06);
+
+  /* Transition Curves */
+  --md-sys-motion-standard: cubic-bezier(0.2, 0, 0, 1);
+  --md-sys-motion-emphasized: cubic-bezier(0.2, 0, 0, 1.2);
+}
+
+/* M3 Dark Theme Tonal Color Palette - REFINED BALANCED CONTRAST */
+html.dark, 
+body.dark {
+  --md-sys-color-primary: #27272a;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #1e1e24;
+  --md-sys-color-on-primary-container: #ffffff;
+
+  --md-sys-color-secondary: #cbd5e1;
+  --md-sys-color-on-secondary: #0f172a;
+  --md-sys-color-secondary-container: #1f1f23;
+  --md-sys-color-on-secondary-container: #f4f4f5;
+
+  --md-sys-color-tertiary: #a1a1aa;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #27272a;
+  --md-sys-color-on-tertiary-container: #ffffff;
+
+  --md-sys-color-surface: #0f0f12;
+  --md-sys-color-surface-dim: #0f0f12;
+  --md-sys-color-surface-bright: #1c1c21;
+  --md-sys-color-surface-container-lowest: #18181b;
+  --md-sys-color-surface-container-low: #1c1c20;
+  --md-sys-color-surface-container: #222228;
+  --md-sys-color-surface-container-high: #282830;
+  --md-sys-color-surface-container-highest: #32323c;
+
+  --md-sys-color-on-surface: #f4f4f5;
+  --md-sys-color-on-surface-variant: #a1a1aa;
+  --md-sys-color-outline: #38383e;
+  --md-sys-color-outline-variant: #27272a;
+
+  --md-sys-color-error: #ffb4ab;
+  --md-sys-color-error-container: #93000a;
+  --md-sys-color-on-error-container: #ffdad6;
+
+  --md-sys-color-success: #86efac;
+  --md-sys-color-success-container: #14532d;
+  --md-sys-color-on-success-container: #dcfce7;
+
+  --md-sys-elevation-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.4), 0px 1px 2px 0px rgba(0, 0, 0, 0.2);
+  --md-sys-elevation-2: 0px 2px 6px 2px rgba(0, 0, 0, 0.5), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+  --md-sys-elevation-3: 0px 4px 12px 3px rgba(0, 0, 0, 0.6), 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+  --md-sys-elevation-4: 0px 6px 16px 4px rgba(0, 0, 0, 0.7), 0px 2px 4px 0px rgba(0, 0, 0, 0.4);
+  --md-sys-elevation-5: 0px 8px 24px 6px rgba(0, 0, 0, 0.8), 0px 4px 8px 0px rgba(0, 0, 0, 0.5);
+}
+
+/* =========================================================================
+   GLOBAL BASE TYPOGRAPHY & RESET
+   ========================================================================= */
+
+body {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  transition: background-color 0.2s var(--md-sys-motion-standard), color 0.2s var(--md-sys-motion-standard);
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom Material Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--md-sys-color-outline);
+}
+
+/* =========================================================================
+   MATERIAL DESIGN 3 COMPONENT STYLES
+   ========================================================================= */
+
+/* --- 1. M3 BUTTON HIERARCHY --- */
+
+/* Filled Button (High Emphasis / Primary CTA) */
+.m3-btn-filled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border-radius: var(--md-sys-shape-full);
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  border: none;
+  box-shadow: var(--md-sys-elevation-1);
+  transition: all 0.2s var(--md-sys-motion-standard);
+  cursor: pointer;
+}
+.m3-btn-filled:hover {
+  filter: brightness(1.08);
+  box-shadow: var(--md-sys-elevation-2);
+  transform: translateY(-1px);
+}
+.m3-btn-filled:active {
+  transform: translateY(0);
+  box-shadow: var(--md-sys-elevation-1);
+}
+
+/* Tonal Button (Medium-High Emphasis / Secondary Actions) */
+.m3-btn-tonal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border-radius: var(--md-sys-shape-full);
+  background-color: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  transition: all 0.2s var(--md-sys-motion-standard);
+  cursor: pointer;
+}
+.m3-btn-tonal:hover {
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  border-color: var(--md-sys-color-outline);
+  transform: translateY(-1px);
+}
+.m3-btn-tonal:active {
+  transform: translateY(0);
+}
+
+/* Outlined Button (Medium Emphasis) */
+.m3-btn-outlined {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: var(--md-sys-shape-full);
+  background-color: transparent;
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline);
+  transition: all 0.2s var(--md-sys-motion-standard);
+  cursor: pointer;
+}
+.m3-btn-outlined:hover {
+  background-color: var(--md-sys-color-surface-container-low);
+  border-color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Text Button (Low Emphasis) */
+.m3-btn-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: var(--md-sys-shape-full);
+  background-color: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  border: none;
+  transition: all 0.2s var(--md-sys-motion-standard);
+  cursor: pointer;
+}
+.m3-btn-text:hover {
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+}
+
+/* Icon Button (Compact Touch Target) */
+.m3-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--md-sys-shape-full);
+  background-color: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  border: 1px solid transparent;
+  transition: all 0.2s var(--md-sys-motion-standard);
+  cursor: pointer;
+}
+.m3-icon-btn:hover {
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
+  border-color: var(--md-sys-color-outline-variant);
+}
+
+/* --- 2. M3 CARDS & SURFACES --- */
+
+.m3-card {
+  background-color: var(--md-sys-color-surface-container-lowest);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-xl);
+  transition: all 0.2s var(--md-sys-motion-standard);
+}
+
+.m3-card-elevated {
+  background-color: var(--md-sys-color-surface-container-lowest);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-xl);
+  box-shadow: var(--md-sys-elevation-1);
+  transition: all 0.2s var(--md-sys-motion-standard);
+}
+.m3-card-elevated:hover {
+  box-shadow: var(--md-sys-elevation-2);
+}
+
+.m3-card-filled {
+  background-color: var(--md-sys-color-surface-container-low);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-xl);
+}
+
+/* --- 3. M3 SEGMENTED CONTROL (TABS SWITCHER) --- */
+
+.m3-segmented-control {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem;
+  background-color: var(--md-sys-color-surface-container);
+  border-radius: var(--md-sys-shape-full);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  gap: 0.25rem;
+}
+
+.m3-segmented-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--md-sys-shape-full);
+  background-color: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  border: none;
+  transition: all 0.2s var(--md-sys-motion-standard);
+  cursor: pointer;
+}
+
+.m3-segmented-btn:hover:not(.m3-segmented-active) {
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+}
+
+.m3-segmented-btn.m3-segmented-active,
+.m3-segmented-btn.bg-white {
+  background-color: var(--md-sys-color-surface-container-lowest) !important;
+  color: var(--md-sys-color-on-surface) !important;
+  box-shadow: var(--md-sys-elevation-1) !important;
+}
+
+html.dark .m3-segmented-btn.bg-white,
+body.dark .m3-segmented-btn.bg-white {
+  background-color: var(--md-sys-color-surface-container-high) !important;
+  color: var(--md-sys-color-on-surface) !important;
+}
+
+/* --- 4. M3 TEXT FIELDS & INPUTS --- */
+
+input:not(.inline-cell-input):not(.m3-input-field):not(.m3-input-field-no-icon),
+select,
+textarea {
+  background-color: var(--md-sys-color-surface-container-lowest) !important;
+  color: var(--md-sys-color-on-surface) !important;
+  border: 1px solid var(--md-sys-color-outline) !important;
+  border-radius: var(--md-sys-shape-md) !important;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.8125rem !important;
+  transition: all 0.2s var(--md-sys-motion-standard) !important;
+}
+
+input:not(.inline-cell-input):focus,
+select:focus,
+textarea:focus {
+  outline: none !important;
+  border-color: var(--md-sys-color-primary) !important;
+  box-shadow: 0 0 0 2px var(--md-sys-color-outline-variant) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--md-sys-color-on-surface-variant) !important;
+}
+
+/* --- 5. M3 DATA TABLE (TABLE GRID) --- */
+
+.work-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  background-color: var(--md-sys-color-surface-container-lowest);
+}
+
+.work-table th {
+  background-color: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface-variant);
+  font-weight: 600;
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  border-right: 1px solid var(--md-sys-color-outline-variant);
+  padding: 0.75rem 1rem;
+}
+
+.work-table td {
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  border-right: 1px solid var(--md-sys-color-outline-variant);
+  color: var(--md-sys-color-on-surface);
+  padding: 0.75rem 1rem;
+  font-size: 0.8125rem;
+}
+
+.work-table tr:hover td {
+  background-color: var(--md-sys-color-surface-container-low);
+}
+
+.cell-editable {
+  transition: all 0.15s var(--md-sys-motion-standard);
+  border-radius: var(--md-sys-shape-xs);
+}
+
+.cell-editable:hover {
+  background-color: var(--md-sys-color-surface-container-high) !important;
+  outline: 1.5px dashed var(--md-sys-color-outline) !important;
+  outline-offset: -1.5px !important;
+}
+
+.cell-editable:focus-within {
+  background-color: var(--md-sys-color-surface-container-lowest) !important;
+  outline: 2px solid var(--md-sys-color-primary) !important;
+  outline-offset: -2px !important;
+  box-shadow: 0 0 0 3px var(--md-sys-color-outline-variant) !important;
+}
+
+/* --- 6. M3 KANBAN BOARD --- */
+
+.kanban-col {
+  min-height: 480px;
+  background-color: var(--md-sys-color-surface-container-low);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-xl);
+  padding: 1rem;
+}
+
+.kanban-card {
+  background-color: var(--md-sys-color-surface-container-lowest);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-lg);
+  box-shadow: var(--md-sys-elevation-1);
+  cursor: grab;
+  transition: all 0.2s var(--md-sys-motion-standard);
+}
+
+.kanban-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--md-sys-elevation-2);
+  border-color: var(--md-sys-color-outline);
+}
+
+/* --- 7. M3 CALENDAR VIEW --- */
+
+.calendar-cell {
+  min-height: 110px;
+  background-color: var(--md-sys-color-surface-container-lowest);
+  border-color: var(--md-sys-color-outline-variant) !important;
+  transition: all 0.15s var(--md-sys-motion-standard);
+}
+
+.calendar-cell:hover {
+  background-color: var(--md-sys-color-surface-container-low);
+}
+
+.calendar-other-month {
+  background-color: var(--md-sys-color-surface-container);
+  opacity: 0.5;
+}
+
+.calendar-feature-pill {
+  transition: transform 0.15s var(--md-sys-motion-standard), box-shadow 0.15s var(--md-sys-motion-standard);
+  border-radius: var(--md-sys-shape-sm);
+  background-color: var(--md-sys-color-surface-container-low);
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.calendar-feature-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--md-sys-elevation-1);
+}
+
+/* --- 8. M3 STATUS & PRIORITY PILLS --- */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--md-sys-shape-full);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  transition: all 0.15s var(--md-sys-motion-standard);
+}
+.status-badge:hover {
+  filter: brightness(0.96);
+  transform: translateY(-1px);
+}
+
+.status-planning { background-color: var(--md-sys-color-surface-container-low); color: var(--md-sys-color-on-surface-variant); border: 1px solid var(--md-sys-color-outline-variant); }
+.status-procurement { background-color: var(--md-sys-color-surface-container-low); color: var(--md-sys-color-on-surface-variant); border: 1px solid var(--md-sys-color-outline-variant); }
+.status-review { background-color: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-surface); border: 1px solid var(--md-sys-color-outline); }
+.status-in-progress { background-color: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container); border: 1px solid var(--md-sys-color-outline); font-weight: 700; }
+.status-approved { background-color: var(--md-sys-color-success-container); color: var(--md-sys-color-on-success-container); border: 1px solid rgba(27, 109, 58, 0.2); }
+.status-on-hold { background-color: var(--md-sys-color-surface-container-low); color: var(--md-sys-color-on-surface-variant); border: 1px solid var(--md-sys-color-outline-variant); }
+.status-completed { background-color: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); border: 1px solid var(--md-sys-color-primary); }
+.status-blocked { background-color: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container); border: 1px solid rgba(186, 26, 26, 0.2); text-decoration: line-through; }
+
+.priority-critical { background-color: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); border-radius: var(--md-sys-shape-full); padding: 0.15rem 0.5rem; }
+.priority-high { background-color: var(--md-sys-color-tertiary); color: var(--md-sys-color-on-tertiary); border-radius: var(--md-sys-shape-full); padding: 0.15rem 0.5rem; }
+.priority-medium { background-color: var(--md-sys-color-surface-container-highest); color: var(--md-sys-color-on-surface); border-radius: var(--md-sys-shape-full); padding: 0.15rem 0.5rem; }
+.priority-low { background-color: var(--md-sys-color-surface-container-high); color: var(--md-sys-color-on-surface-variant); border-radius: var(--md-sys-shape-full); padding: 0.15rem 0.5rem; }
+
+/* --- 9. M3 MODALS & DIALOGS --- */
+
+.m3-dialog {
+  background-color: var(--md-sys-color-surface-container-lowest);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: var(--md-sys-shape-2xl);
+  box-shadow: var(--md-sys-elevation-4);
+}
+
+/* --- 10. ICONOGRAPHY & TINT --- */
+
+[data-lucide] {
+  color: var(--md-sys-color-on-surface-variant);
+  transition: color 0.15s var(--md-sys-motion-standard);
+}
+
+button:hover [data-lucide] {
+  color: inherit;
+}
+
+/* Live Real-Time Pulse */
+@keyframes live-pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.live-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--md-sys-shape-full);
+  background-color: #10b981;
+  animation: live-pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+/* --- 11. EMBEDDED INPUT ICONS & LABELS --- */
+
+.m3-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.m3-input-icon-left {
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.m3-input-icon-right {
+  position: absolute;
+  right: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  color: var(--md-sys-color-on-surface-variant);
+  background: transparent;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+}
+
+.m3-input-icon-right:hover {
+  color: var(--md-sys-color-on-surface);
+}
+
+.m3-input-wrapper input.m3-input-field,
+input.m3-input-field {
+  width: 100% !important;
+  padding-top: 0.65rem !important;
+  padding-bottom: 0.65rem !important;
+  padding-left: 2.75rem !important; /* 44px safe clear space for left icon */
+  padding-right: 2.75rem !important; /* 44px safe clear space for right toggle */
+  border-radius: var(--md-sys-shape-md) !important;
+  border: 1px solid var(--md-sys-color-outline-variant) !important;
+  background-color: var(--md-sys-color-surface-container-lowest) !important;
+  color: var(--md-sys-color-on-surface) !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.25rem !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.m3-input-wrapper input.m3-input-field:focus,
+input.m3-input-field:focus {
+  outline: none !important;
+  border-color: var(--md-sys-color-primary) !important;
+  box-shadow: 0 0 0 2px var(--md-sys-color-primary-container) !important;
+}
+
+.m3-input-wrapper input.m3-input-field-no-icon,
+input.m3-input-field-no-icon,
+select.m3-input-field-no-icon {
+  width: 100% !important;
+  padding-top: 0.65rem !important;
+  padding-bottom: 0.65rem !important;
+  padding-left: 0.875rem !important;
+  padding-right: 0.875rem !important;
+  border-radius: var(--md-sys-shape-md) !important;
+  border: 1px solid var(--md-sys-color-outline-variant) !important;
+  background-color: var(--md-sys-color-surface-container-lowest) !important;
+  color: var(--md-sys-color-on-surface) !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.25rem !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.m3-input-wrapper input.m3-input-field-no-icon:focus,
+input.m3-input-field-no-icon:focus,
+select.m3-input-field-no-icon:focus {
+  outline: none !important;
+  border-color: var(--md-sys-color-primary) !important;
+  box-shadow: 0 0 0 2px var(--md-sys-color-primary-container) !important;
+}
+
+.m3-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.01em;
+}
+
+/* Clean Single Date Picker Input Styling */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+html.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.85);
+}
+
+
+/* Search Bar Left Icon Safe Clear Space */
+#searchInput,
+.search-input-field {
+  padding-left: 2.35rem !important; /* 38px safe clear space for search icon */
+  padding-right: 0.85rem !important;
+}
+
+
+/* =========================================================================
+   SIDEBAR TRANSITIONS & COLLAPSED STATE
+   ========================================================================= */
+
+#appSidebar.sidebar-collapsed {
+  width: 4.5rem !important; /* 72px icon-only */
+}
+
+#appSidebar.sidebar-collapsed .sidebar-text {
+  display: none !important;
+}
+
+#appSidebar.sidebar-collapsed .sidebar-nav-btn {
+  justify-content: center !important;
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+#appSidebar.sidebar-collapsed select#tenantSelect {
+  display: none !important;
+}
+
+.sidebar-nav-btn {
+  transition: all 0.15s ease;
+}
+
+.sidebar-nav-btn.active {
+  background-color: var(--md-sys-color-surface-container-high) !important;
+  color: var(--md-sys-color-on-surface) !important;
+  box-shadow: var(--md-sys-elevation-1);
+}
+
+
+/* =========================================================================
+   AUTH GATEWAY LIGHT & DARK THEME SPECIFICITY
+   ========================================================================= */
+
+#authGatewayView {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+#authGatewayView .m3-input-field {
+  padding-left: 2.75rem !important;
+  padding-right: 2.5rem !important;
+  height: 42px !important;
+  border-radius: 0.75rem !important;
+  font-size: 0.8125rem !important;
+  transition: all 0.15s ease !important;
+}
+
+#authGatewayView .m3-input-field-no-icon {
+  height: 42px !important;
+  border-radius: 0.75rem !important;
+  font-size: 0.8125rem !important;
+  padding-left: 0.875rem !important;
+  padding-right: 0.875rem !important;
+}
+
+html:not(.dark) #authGatewayView .m3-input-field,
+html:not(.dark) #authGatewayView .m3-input-field-no-icon {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+html:not(.dark) #authGatewayView .m3-input-field:focus,
+html:not(.dark) #authGatewayView .m3-input-field-no-icon:focus {
+  background-color: #ffffff !important;
+  border-color: #64748b !important;
+  box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.2) !important;
+}
+
+html.dark #authGatewayView .m3-input-field,
+html.dark #authGatewayView .m3-input-field-no-icon {
+  background-color: #121214 !important;
+  border-color: #27272a !important;
+  color: #f4f4f5 !important;
+}
+
+html.dark #authGatewayView .m3-input-field:focus,
+html.dark #authGatewayView .m3-input-field-no-icon:focus {
+  background-color: #18181c !important;
+  border-color: #52525b !important;
+  box-shadow: 0 0 0 2px rgba(161, 161, 170, 0.2) !important;
+}
+
+/* Dedicated Currency Input Padding */
+.currency-input-field {
+  padding-left: 2.25rem !important;
+}
+
+
+/* =========================================================================
+   COMPREHENSIVE DARK MODE COMPONENT OVERRIDES
+   ========================================================================= */
+
+html.dark body,
+body.dark {
+  background-color: #09090b !important;
+  color: #f4f4f5 !important;
+}
+
+/* 1. Dark Buttons */
+html.dark .m3-btn-filled,
+body.dark .m3-btn-filled {
+  background-color: #27272a !important;
+  color: #ffffff !important;
+  border: 1px solid #3f3f46 !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
+}
+html.dark .m3-btn-filled:hover,
+body.dark .m3-btn-filled:hover {
+  background-color: #38383e !important;
+  color: #ffffff !important;
+  border-color: #52525b !important;
+}
+
+html.dark .m3-btn-tonal,
+body.dark .m3-btn-tonal {
+  background-color: #18181b !important;
+  color: #f4f4f5 !important;
+  border: 1px solid #27272a !important;
+}
+html.dark .m3-btn-tonal:hover,
+body.dark .m3-btn-tonal:hover {
+  background-color: #27272a !important;
+  color: #ffffff !important;
+  border-color: #3f3f46 !important;
+}
+
+html.dark .m3-btn-outlined,
+body.dark .m3-btn-outlined {
+  background-color: transparent !important;
+  color: #f4f4f5 !important;
+  border: 1px solid #3f3f46 !important;
+}
+html.dark .m3-btn-outlined:hover,
+body.dark .m3-btn-outlined:hover {
+  background-color: #27272a !important;
+  color: #ffffff !important;
+}
+
+/* 2. Dark Inputs & Form Elements */
+html.dark input:not(.inline-cell-input),
+html.dark select,
+html.dark textarea,
+body.dark input:not(.inline-cell-input),
+body.dark select,
+body.dark textarea {
+  background-color: #121214 !important;
+  color: #f4f4f5 !important;
+  border: 1px solid #27272a !important;
+}
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus,
+body.dark input:focus,
+body.dark select:focus,
+body.dark textarea:focus {
+  border-color: #52525b !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 2px rgba(82, 82, 91, 0.3) !important;
+}
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #71717a !important;
+}
+
+/* 3. Dark Tables */
+html.dark .m3-table-header th {
+  background-color: #121214 !important;
+  color: #a1a1aa !important;
+  border-bottom: 1px solid #27272a !important;
+}
+html.dark .m3-table-row {
+  background-color: transparent !important;
+  border-bottom: 1px solid #1f1f23 !important;
+}
+html.dark .m3-table-row:hover {
+  background-color: #18181c !important;
+}
+html.dark .m3-table-row td {
+  color: #f4f4f5 !important;
+}
+html.dark .m3-table-footer {
+  background-color: #121214 !important;
+  color: #ffffff !important;
+  border-top: 1px solid #27272a !important;
+}
+
+/* 4. Dark Cards & Containers */
+html.dark .bg-white {
+  background-color: #18181b !important;
+  color: #f4f4f5 !important;
+}
+html.dark .bg-slate-50,
+html.dark .bg-slate-100 {
+  background-color: #121214 !important;
+}
+html.dark .border-slate-100,
+html.dark .border-slate-200 {
+  border-color: #27272a !important;
+}
+html.dark .text-slate-900,
+html.dark .text-black,
+html.dark .text-slate-800 {
+  color: #f4f4f5 !important;
+}
+html.dark .text-slate-700,
+html.dark .text-slate-600 {
+  color: #d4d4d8 !important;
+}
+html.dark .text-slate-500,
+html.dark .text-slate-400 {
+  color: #a1a1aa !important;
+}
+
+/* 5. Dark Modals & Drawers */
+html.dark #authGatewayView,
+html.dark #newExpenseModal > div:nth-child(2),
+html.dark #addTeamShareModal > div:nth-child(2),
+html.dark #payslipModal > div:nth-child(2),
+html.dark #newProjectModal > div:nth-child(2),
+html.dark #editFeatureModal > div:nth-child(2),
+html.dark #addColumnModal > div:nth-child(2),
+html.dark #dbInspectorModal > div:nth-child(2),
+html.dark #rbacMatrixModal > div:nth-child(2),
+html.dark #userManagementModal > div:nth-child(2),
+html.dark #websitePreviewModal > div:nth-child(2) {
+  background-color: #18181b !important;
+  color: #f4f4f5 !important;
+  border-color: #27272a !important;
+}
+
+
+/* STRICT DARK MODE BUTTON STYLING (PREVENT ANY ACCIDENTAL WHITE BUTTONS) */
+html.dark button:not(.status-badge):not(.priority-badge):not(.tag-badge),
+body.dark button:not(.status-badge):not(.priority-badge):not(.tag-badge) {
+  color: #f4f4f5;
+}
+
+html.dark .m3-btn-filled,
+body.dark .m3-btn-filled,
+html.dark button.bg-slate-900,
+body.dark button.bg-slate-900 {
+  background-color: #27272a !important;
+  color: #ffffff !important;
+  border: 1px solid #3f3f46 !important;
+}
+
+html.dark .m3-btn-filled:hover,
+body.dark .m3-btn-filled:hover,
+html.dark button.bg-slate-900:hover,
+body.dark button.bg-slate-900:hover {
+  background-color: #38383e !important;
+  color: #ffffff !important;
+  border-color: #52525b !important;
+}
+
+html.dark .m3-btn-tonal,
+body.dark .m3-btn-tonal,
+html.dark button.bg-slate-100,
+body.dark button.bg-slate-100 {
+  background-color: #18181b !important;
+  color: #f4f4f5 !important;
+  border: 1px solid #27272a !important;
+}
+
+html.dark .m3-btn-tonal:hover,
+body.dark .m3-btn-tonal:hover,
+html.dark button.bg-slate-100:hover,
+body.dark button.bg-slate-100:hover {
+  background-color: #27272a !important;
+  color: #ffffff !important;
+  border-color: #3f3f46 !important;
+}
+
+html.dark .m3-btn-outlined,
+body.dark .m3-btn-outlined {
+  background-color: transparent !important;
+  color: #f4f4f5 !important;
+  border: 1px solid #3f3f46 !important;
+}
+
+html.dark .m3-btn-outlined:hover,
+body.dark .m3-btn-outlined:hover {
+  background-color: #27272a !important;
+  color: #ffffff !important;
+}
+
+/* Active sidebar and view buttons */
+html.dark .sidebar-nav-btn.active,
+body.dark .sidebar-nav-btn.active,
+html.dark .sidebar-view-btn.active,
+body.dark .sidebar-view-btn.active,
+html.dark .view-tab-btn.active,
+body.dark .view-tab-btn.active {
+  background-color: #27272a !important;
+  color: #ffffff !important;
+  border-color: #3f3f46 !important;
+}
+
+/* Modal and Tab Active states */
+html.dark .bg-white:not(input):not(textarea):not(select) {
+  background-color: #18181b !important;
+  color: #f4f4f5 !important;
+}
+
+
+/* Dedicated Table Header Dark Mode Fixes */
+html.dark table.work-table thead,
+body.dark table.work-table thead {
+  background-color: #18181b !important;
+  color: #f4f4f5 !important;
+}
+
+html.dark table.work-table thead th,
+body.dark table.work-table thead th {
+  background-color: #18181b !important;
+  color: #f4f4f5 !important;
+  border-bottom: 1px solid #27272a !important;
+}
+
+html.dark table.work-table thead th span.font-mono,
+body.dark table.work-table thead th span.font-mono {
+  background-color: #27272a !important;
+  color: #d4d4d8 !important;
+  border: 1px solid #3f3f46 !important;
+}
+
+html.dark table.work-table tbody tr,
+body.dark table.work-table tbody tr {
+  border-color: #27272a !important;
+}
+
+html.dark table.work-table tbody tr:hover,
+body.dark table.work-table tbody tr:hover {
+  background-color: rgba(39, 39, 42, 0.4) !important;
+}
+
+html.dark table.work-table tfoot,
+body.dark table.work-table tfoot {
+  background-color: #18181b !important;
+  color: #f4f4f5 !important;
+  border-color: #27272a !important;
+}

@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenFlow Work OS • Enterprise PostgreSQL JSONB & SQLite</title>
+  
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f8fafc',
+              100: '#f1f5f9',
+              500: '#64748b',
+              600: '#475569',
+              900: '#0f172a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  
+  <!-- Material 3 & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Roboto:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen flex flex-col antialiased bg-slate-50 dark:bg-[#121214] text-slate-900 dark:text-slate-100 transition-colors duration-200">
+
+  <!-- ==========================================
+       1. STANDALONE EXTERNAL AUTHENTICATION GATEWAY
+       ========================================== -->
+  <div id="authGatewayView" style="display: none !important;" class="hidden">
+    
+    <!-- Ambient Background Lighting -->
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-blue-500/10 dark:bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-500/10 dark:bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <!-- Gateway Top Bar -->
+    <header class="relative z-10 px-6 py-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800/80 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md transition-colors">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-slate-900 dark:bg-gradient-to-tr dark:from-slate-800 dark:to-slate-700 border border-slate-700/50 flex items-center justify-center shadow-md">
+          <i data-lucide="layers" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <span class="text-base font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+            <span>OpenFlow</span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-mono font-semibold border border-slate-200 dark:border-slate-700">Work OS</span>
+          </span>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Enterprise JSONB & SQLite Engine</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" id="gateThemeToggleBtn" onclick="toggleTheme()" class="p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-colors" title="Toggle Theme">
+          <i id="gateThemeToggleIcon" data-lucide="sun" class="w-4 h-4 text-amber-500"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Gateway Center Body -->
+    <main class="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-6">
+      <div class="max-w-md w-full">
+        
+        <div class="bg-white dark:bg-[#18181c] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#27272a] p-6 sm:p-8 space-y-5">
+          
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <div>
+              <h2 class="text-base font-bold text-slate-900 dark:text-white">Work OS Access Portal</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Sign in to unlock your private workspaces</p>
+            </div>
+            <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 flex items-center justify-center">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+            </div>
+          </div>
+
+          <!-- Tab Switcher (Sign In vs Register) -->
+          <div class="flex items-center p-1 bg-slate-100 dark:bg-[#1c1c20] rounded-lg text-xs font-semibold">
+            <button type="button" id="gateTabLoginBtn" onclick="switchGatewayTab('login')" class="flex-1 py-1.5 rounded-md bg-white dark:bg-[#28282e] text-slate-900 dark:text-white shadow-2xs transition-all text-center">
+              Sign In
+            </button>
+            <button type="button" id="gateTabRegisterBtn" onclick="switchGatewayTab('register')" class="flex-1 py-1.5 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all text-center">
+              Create Account
+            </button>
+          </div>
+
+          <!-- Alert Box -->
+          <div id="gateAlertBox" class="hidden p-3 rounded-lg text-xs font-semibold"></div>
+
+          <!-- TAB 1: GATEWAY LOGIN FORM -->
+          <form id="gateLoginForm" onsubmit="event.preventDefault(); executeGatewayLogin();" class="space-y-4 text-xs">
+            <div>
+              <label for="gateLoginEmail" class="m3-label">Email Address</label>
+              <div class="m3-input-wrapper">
+                <span class="m3-input-icon-left"><i data-lucide="mail" class="w-4 h-4"></i></span>
+                <input id="gateLoginEmail" type="email" required placeholder="name@company.com" class="m3-input-field font-medium">
+              </div>
+            </div>
+
+            <div>
+              <label for="gateLoginPassword" class="m3-label">Password</label>
+              <div class="m3-input-wrapper">
+                <span class="m3-input-icon-left"><i data-lucide="lock" class="w-4 h-4"></i></span>
+                <input id="gateLoginPassword" type="password" required placeholder="••••••••" class="m3-input-field">
+                <button type="button" id="gateTogglePasswordBtn" class="m3-input-icon-right" title="Toggle password visibility">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" id="gateLoginSubmitBtn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-[#27272a] dark:hover:bg-[#38383e] text-white dark:text-white font-semibold rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 text-xs">
+              <i data-lucide="log-in" class="w-4 h-4"></i> Sign In to Work OS
+            </button>
+
+            <!-- Quick 1-Click Access for Registered Accounts -->
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
+              <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center justify-between">
+                <span>Quick 1-Click Account Sign In:</span>
+                <span class="text-[10px] text-slate-400 font-mono">Instant Auth</span>
+              </div>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button type="button" onclick="executeGatewayLogin('azarelclightn@gmail.com', 'azarel123')" class="p-2.5 rounded-xl border border-slate-200 dark:border-[#2c2c32] bg-slate-50 hover:bg-slate-100 dark:bg-[#1e1e24] dark:hover:bg-[#282830] transition-colors text-left flex items-center gap-2 group">
+                  <div class="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                    A
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="font-bold text-[11px] text-slate-900 dark:text-white truncate">Azarel Clight</div>
+                    <div class="text-[9px] text-slate-400 truncate">Lead Architect</div>
+                  </div>
+                </button>
+
+                <button type="button" onclick="executeGatewayLogin('admin@openflow.io', 'admin123')" class="p-2.5 rounded-xl border border-slate-200 dark:border-[#2c2c32] bg-slate-50 hover:bg-slate-100 dark:bg-[#1e1e24] dark:hover:bg-[#282830] transition-colors text-left flex items-center gap-2 group">
+                  <div class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <div class="font-bold text-[11px] text-slate-900 dark:text-white truncate">System Admin</div>
+                    <div class="text-[9px] text-slate-400 truncate">Root Admin</div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Direct Link to Create Account -->
+            <div class="pt-3 text-center border-t border-slate-100 dark:border-slate-800">
+              <button type="button" onclick="switchGatewayTab('register')" class="text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:underline transition-all inline-flex items-center gap-1">
+                <span>Don't have an account?</span>
+                <span class="font-bold underline">Create an account</span> →
+              </button>
+            </div>
+          </form>
+
+          <!-- TAB 2: GATEWAY REGISTRATION FORM -->
+          <form id="gateRegisterForm" onsubmit="event.preventDefault(); executeGatewayRegister();" class="space-y-3 text-xs hidden">
+            <div>
+              <label for="gateRegFullName" class="m3-label">Full Name *</label>
+              <div class="m3-input-wrapper">
+                <span class="m3-input-icon-left"><i data-lucide="user" class="w-4 h-4"></i></span>
+                <input id="gateRegFullName" type="text" required placeholder="e.g. Maria Santos" class="m3-input-field">
+              </div>
+            </div>
+
+            <div>
+              <label for="gateRegEmail" class="m3-label">Email Address *</label>
+              <div class="m3-input-wrapper">
+                <span class="m3-input-icon-left"><i data-lucide="mail" class="w-4 h-4"></i></span>
+                <input id="gateRegEmail" type="email" required placeholder="name@company.com" class="m3-input-field">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+              <div>
+                <label for="gateRegPassword" class="m3-label">Password *</label>
+                <input id="gateRegPassword" type="password" required placeholder="••••••••" class="m3-input-field-no-icon">
+              </div>
+              <div>
+                <label for="gateRegConfirmPassword" class="m3-label">Confirm Password *</label>
+                <input id="gateRegConfirmPassword" type="password" required placeholder="••••••••" class="m3-input-field-no-icon">
+              </div>
+            </div>
+
+            <div>
+              <label for="gateRegOrg" class="m3-label">Department / Organization *</label>
+              <input id="gateRegOrg" type="text" required placeholder="e.g. Core Engineering, Product Design" class="m3-input-field-no-icon">
+            </div>
+
+            <div>
+              <label for="gateRegRole" class="m3-label">Assigned Role & Permissions *</label>
+              <select id="gateRegRole" class="m3-input-field-no-icon font-medium">
+                <option value="admin" selected>Lead Administrator (Full Admin)</option>
+                <option value="dept_head">Department Lead (Editor)</option>
+                <option value="inspector">QA & Security Inspector (Approver)</option>
+                <option value="contractor">External Partner (Redacted Financials)</option>
+                <option value="auditor">Compliance Auditor (Read-Only)</option>
+              </select>
+            </div>
+
+            <button type="submit" id="gateRegisterSubmitBtn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-[#27272a] dark:hover:bg-[#38383e] text-white dark:text-white font-semibold rounded-lg shadow-xs transition-colors flex items-center justify-center gap-2 mt-2">
+              <i data-lucide="user-check" class="w-4 h-4"></i> Create Work OS Account
+            </button>
+
+            <!-- Direct Link to Sign In -->
+            <div class="pt-2 text-center">
+              <button type="button" onclick="switchGatewayTab('login')" class="text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:underline transition-all inline-flex items-center gap-1">
+                <span>Already have an account?</span>
+                <span class="font-bold underline">Sign In</span> →
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- Gateway Footer -->
+    <footer class="relative z-10 px-6 py-4 border-t border-slate-200 dark:border-slate-800/80 bg-white/50 dark:bg-slate-950/50 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors">
+      <span>OpenFlow Work OS • Enterprise PostgreSQL JSONB & SQLite Architecture • Zero-Trust Session Active</span>
+    </footer>
+
+  </div>
+
+  <!-- ==========================================
+       2. MAIN WORK OS APPLICATION CONTAINER
+       ========================================== -->
+    <!-- ==========================================
+       2. MAIN WORK OS APPLICATION CONTAINER (SIDEBAR LAYOUT)
+       ========================================== -->
+  <div id="mainAppView" style="display: flex !important;" class="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-[#121214] text-slate-900 dark:text-slate-100">
+    
+    <!-- LEFT SIDEBAR -->
+    <aside id="appSidebar" class="w-64 flex-shrink-0 bg-white dark:bg-[#18181b] border-r border-slate-200 dark:border-[#27272a] flex flex-col h-full transition-all duration-300 z-30 select-none">
+      
+      <!-- Sidebar Header / Brand -->
+      <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-8 h-8 rounded-xl bg-slate-900 dark:bg-[#27272a] text-white dark:text-white flex items-center justify-center font-bold text-sm shadow-xs flex-shrink-0">
+            <i data-lucide="layers" class="w-4 h-4"></i>
+          </div>
+          <div class="sidebar-text min-w-0 truncate">
+            <span class="text-sm font-extrabold tracking-tight text-slate-900 dark:text-white">OpenFlow</span>
+            <span class="text-[10px] ml-1 px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-[#27272a] text-slate-500 dark:text-slate-400 font-mono font-semibold">OS</span>
+          </div>
+        </div>
+
+        <button type="button" id="sidebarCollapseBtn" onclick="toggleSidebar()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-[#27272a] transition-colors" title="Toggle Sidebar Collapse">
+          <i data-lucide="panel-left-close" class="w-4 h-4 text-slate-900 dark:text-slate-100"></i>
+        </button>
+      </div>
+
+      <!-- Workspace Selector -->
+      <div class="p-3 border-b border-slate-100 dark:border-slate-800 space-y-2">
+        <div class="sidebar-text flex items-center justify-between text-[11px] font-semibold text-slate-400 uppercase tracking-wider px-1">
+          <span>Active Project</span>
+          <button type="button" onclick="openProjectManagerModal()" class="text-blue-600 dark:text-blue-400 hover:underline text-[10px] capitalize font-bold">Manage</button>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <div class="relative flex-1 min-w-0">
+            <select id="tenantSelect" onchange="handleWorkspaceChange(this.value)" class="w-full bg-slate-50 dark:bg-[#202024] text-slate-800 dark:text-slate-200 font-semibold text-xs py-1.5 pl-2.5 pr-7 rounded-lg border border-slate-200 dark:border-[#38383e] focus:outline-none cursor-pointer truncate">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+          <button type="button" onclick="openProjectManagerModal()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-[#27272a] flex-shrink-0" title="Manage Project Workspaces">
+            <i data-lucide="folder-kanban" class="w-4 h-4 text-slate-900 dark:text-slate-100"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Sidebar Navigation Links -->
+      <div class="flex-1 overflow-y-auto p-3 space-y-6">
+        
+        <!-- SECTION 1: VIEWS (PLANNER & WORK VIEWS) -->
+        <div class="space-y-1">
+          <div class="sidebar-text text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2.5 mb-1.5">
+            Workspace Views
+          </div>
+          <button type="button" onclick="switchViewDirect('planner')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" data-view="planner" title="Workspace Planner & Notes View">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <i data-lucide="notebook-pen" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
+              <span class="sidebar-text truncate font-bold text-slate-900 dark:text-white">Planner & Notes</span>
+            </div>
+            <span id="sidebarPlannerBadge" class="sidebar-text text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-[#38383e] text-slate-800 dark:text-slate-200 font-bold">0</span>
+          </button>
+          <button type="button" onclick="switchViewDirect('finance')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" data-view="finance" title="Workspace Finance & Budget Ledger">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <i data-lucide="wallet" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
+              <span class="sidebar-text truncate font-bold text-slate-900 dark:text-white">Finance & Budget</span>
+            </div>
+            <span class="sidebar-text text-[10px] px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-[#27272a] text-emerald-600 dark:text-emerald-400 font-bold border border-slate-200 dark:border-[#38383e]">₱</span>
+          </button>
+          <button type="button" onclick="switchViewDirect('table')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all active bg-slate-100 dark:bg-[#27272a] text-slate-900 dark:text-white" data-view="table">
+            <i data-lucide="table-2" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
+            <span class="sidebar-text truncate">Data Grid</span>
+          </button>
+          <button type="button" onclick="switchViewDirect('kanban')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" data-view="kanban">
+            <i data-lucide="kanban" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
+            <span class="sidebar-text truncate">Kanban Board</span>
+          </button>
+          <button type="button" onclick="switchViewDirect('timeline')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" data-view="timeline">
+            <i data-lucide="calendar" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
+            <span class="sidebar-text truncate">Delivery Timeline</span>
+          </button>
+          <button type="button" onclick="switchViewDirect('dashboard')" class="sidebar-nav-btn sidebar-view-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" data-view="dashboard">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
+            <span class="sidebar-text truncate">Executive Analytics</span>
+          </button>
+        </div>
+
+        <!-- SECTION 2: GOVERNANCE & TOOLS -->
+        <div class="space-y-1">
+          <div class="sidebar-text text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2.5 mb-1.5">
+            Tools & Governance
+          </div>
+          <!-- 2. Event-Driven Automations Engine -->
+          <button type="button" onclick="openAutomationsDrawer()" class="sidebar-nav-btn w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <i data-lucide="zap" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
+              <span class="sidebar-text truncate">Automations</span>
+            </div>
+            <span id="sidebarAutoBadge" class="sidebar-text text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-[#38383e] text-slate-800 dark:text-slate-200 font-bold">0</span>
+          </button>
+
+          <!-- 3. Immutable Audit Trail -->
+          <button type="button" onclick="openAuditTrailDrawer()" class="sidebar-nav-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all">
+            <i data-lucide="history" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
+            <span class="sidebar-text truncate">Audit Trail</span>
+          </button>
+
+          <!-- 4. PostgreSQL JSONB & SQL Store -->
+          <button type="button" onclick="openDbInspectorModalDirect()" class="sidebar-nav-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all">
+            <i data-lucide="database" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
+            <span class="sidebar-text truncate">JSONB / SQL Store</span>
+          </button>
+
+
+          <!-- 6. User Management & Permissions -->
+          <button type="button" onclick="openUserDatabaseModal()" class="sidebar-nav-btn w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all">
+            <i data-lucide="users" class="w-4 h-4 text-slate-900 dark:text-slate-100 flex-shrink-0"></i>
+            <span class="sidebar-text truncate">User Management</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Sidebar Bottom Profile & Controls -->
+      <div class="p-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
+        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-[#202024] border border-slate-200 dark:border-[#2c2c32]">
+          <div class="flex items-center gap-2 min-w-0">
+            <div id="sidebarAvatarInitials" class="w-7 h-7 rounded-lg bg-black text-white flex items-center justify-center font-bold text-xs flex-shrink-0 border border-slate-700">
+              SA
+            </div>
+            <div class="sidebar-text min-w-0 truncate">
+              <div id="sidebarUserName" class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">System Admin</div>
+              <div id="sidebarUserRole" class="text-[10px] text-slate-400 capitalize truncate">Administrator</div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-1">
+            <button type="button" onclick="toggleTheme()" class="p-1.5 text-slate-400 hover:text-amber-500 rounded-lg hover:bg-slate-200 dark:hover:bg-[#2c2c32] transition-colors" title="Toggle Dark/Light Mode">
+              <i data-lucide="sun" class="w-3.5 h-3.5"></i>
+            </button>
+            <button type="button" onclick="handleLogout()" class="p-1.5 text-slate-400 hover:text-red-500 rounded-lg hover:bg-slate-200 dark:hover:bg-[#2c2c32] transition-colors" title="Sign Out">
+              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- RIGHT MAIN WORKSPACE CONTENT CONTAINER -->
+    <div id="appMainContent" class="flex-1 flex flex-col min-w-0 h-full overflow-y-auto">
+      
+      <!-- Top Workspace Bar -->
+      <header class="bg-white dark:bg-[#18181b] border-b border-slate-200 dark:border-[#27272a] sticky top-0 z-20 px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
+        
+        <div class="flex items-center gap-3 min-w-0">
+          <button type="button" id="mobileSidebarToggleBtn" onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-[#27272a]">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <span id="activeTenantBadge" class="text-[10px] px-2 py-0.2 rounded-full bg-slate-100 dark:bg-[#27272a] text-slate-600 dark:text-slate-400 font-semibold border border-slate-200 dark:border-[#38383e]">
+                Workspace
+              </span>
+              <span class="text-xs text-slate-400">•</span>
+              <span id="activeViewBreadcrumb" class="text-xs font-semibold text-slate-500 dark:text-slate-400">Data Grid</span>
+            </div>
+            <h1 id="boardTitle" class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight truncate">
+              Custom Workspace & Project Master Board
+            </h1>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 flex-shrink-0">
+          
+          <!-- Live Event Toast Pill -->
+          <div id="liveEventToast" class="hidden xl:flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-[#27272a] border border-slate-200 dark:border-[#38383e] text-xs font-medium text-slate-600 dark:text-slate-300 truncate max-w-xs">
+            <span class="w-2 h-2 rounded-full bg-black dark:bg-white animate-pulse"></span>
+            <span id="liveEventText" class="truncate text-[11px]">Workspace live synced</span>
+          </div>
+
+          <!-- Quick Actions -->
+          <button id="openImportModalBtn" onclick="openImportModal()" class="m3-btn-tonal text-xs py-1.5" title="Import CSV or JSON">
+            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Import</span>
+          </button>
+
+          <!-- Export Dropdown -->
+          <div class="relative inline-block text-left">
+            <button id="exportDropdownBtn" onclick="toggleExportDropdown(event)" class="m3-btn-outlined text-xs py-1.5" title="Export workspace records">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span class="hidden sm:inline">Export</span>
+              <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400"></i>
+            </button>
+            <div id="exportDropdownMenu" class="hidden absolute right-0 mt-1.5 w-44 bg-white dark:bg-[#18181b] border border-slate-200 dark:border-[#27272a] rounded-xl shadow-xl p-1 z-50 text-xs">
+              <a href="javascript:void(0)" onclick="exportData('csv')" class="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 dark:hover:bg-[#27272a] rounded-lg text-slate-700 dark:text-slate-200 font-medium">
+                <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-emerald-500"></i> CSV Spreadsheet
+              </a>
+              <a href="javascript:void(0)" onclick="exportData('json')" class="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 dark:hover:bg-[#27272a] rounded-lg text-slate-700 dark:text-slate-200 font-medium">
+                <i data-lucide="file-code" class="w-3.5 h-3.5 text-blue-500"></i> JSON Object Data
+              </a>
+              <a href="javascript:void(0)" onclick="exportData('sql')" class="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 dark:hover:bg-[#27272a] rounded-lg text-slate-700 dark:text-slate-200 font-medium">
+                <i data-lucide="database" class="w-3.5 h-3.5 text-purple-500"></i> SQL INSERT Script
+              </a>
+            </div>
+          </div>
+
+          <button id="openAddColumnBtn" onclick="openAddColumnModalDirect()" class="m3-btn-tonal text-xs py-1.5">
+            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+            <span class="hidden md:inline">Add Column</span>
+          </button>
+
+          <!-- Website Showcase Button on the Left Side of New Feature -->
+          <button id="openWebsiteShowcaseHeaderBtn" onclick="openProjectWebsiteModalDirect()" class="px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-[#202024] text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-[#2e2e34] hover:bg-slate-200 dark:hover:bg-[#2a2a30] transition-all flex items-center gap-1.5 shadow-2xs" title="Live Project Website Showcase & Simulator">
+            <div class="relative flex items-center justify-center">
+              <i data-lucide="globe" class="w-3.5 h-3.5 text-slate-900 dark:text-slate-100"></i>
+              <span class="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            </div>
+            <span>Website Showcase</span>
+          </button>
+
+          <button id="openNewProjectModalBtn" onclick="openInsertModal()" class="m3-btn-filled text-xs py-1.5">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>New Feature</span>
+          </button>
+
+        </div>
+
+      </header>
+
+      <!-- Main Workspace Views & Grid Container -->
+      <main class="flex-1 p-4 sm:p-6 w-full space-y-4">
+        
+        <!-- Filter & Search Toolbar Bar -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white dark:bg-[#18181b] p-3 rounded-2xl border border-slate-200 dark:border-[#27272a] shadow-2xs">
+          
+          <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+            <div class="relative flex-1 sm:w-64">
+              <i data-lucide="search" class="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10"></i>
+              <input type="text" id="searchInput" placeholder="Search features..." class="search-input-field w-full pl-10 pr-3 py-1.5 bg-slate-50 dark:bg-[#121214] border border-slate-200 dark:border-[#2c2c32] rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200 focus:outline-none">
+            </div>
+
+            <select id="filterStageSelect" class="px-2.5 py-1.5 bg-slate-50 dark:bg-[#121214] border border-slate-200 dark:border-[#2c2c32] rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer">
+              <option value="">All Stages</option>
+              <option value="Planning">Planning</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Review">Review</option>
+              <option value="Completed">Completed</option>
+              <option value="Blocked">Blocked</option>
+            </select>
+
+            <select id="filterDeptSelect" class="px-2.5 py-1.5 bg-slate-50 dark:bg-[#121214] border border-slate-200 dark:border-[#2c2c32] rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer">
+              <option value="">All Owners / Depts</option>
+            </select>
+          </div>
+
+          <div class="flex items-center gap-2 self-end sm:self-auto">
+
+            <button id="clearBoardBtn" onclick="handleClearBoard()" class="m3-btn-outlined text-xs py-1.5" title="Clear all records">
+              <i data-lucide="trash" class="w-3.5 h-3.5"></i>
+              <span class="hidden md:inline">Clear</span>
+            </button>
+            <button id="deleteProjectBtn" onclick="handleDeleteProject()" class="m3-btn-outlined text-xs py-1.5 text-rose-500 hover:text-rose-600" title="Permanently delete workspace">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <div id="plannerViewContainer" class="w-full hidden"></div>
+        <div id="financeViewContainer" class="w-full hidden"></div>
+        <div id="tableViewContainer" class="w-full"></div>
+        <div id="kanbanViewContainer" class="w-full hidden"></div>
+        <div id="timelineViewContainer" class="w-full hidden"></div>
+        <div id="dashboardViewContainer" class="w-full hidden"></div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       3. MODALS, DRAWERS & DIALOGS
+       ========================================== -->
+
+  <!-- 3.1 AUTOMATIONS DRAWER -->
+  <div id="automationDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+    <div id="automationDrawerBackdrop" onclick="closeAutomationsDrawer()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity opacity-0 cursor-pointer"></div>
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div id="automationDrawerPanel" class="w-screen max-w-md bg-white dark:bg-[#18181b] shadow-2xl border-l border-slate-200 dark:border-[#27272a] transform transition-transform translate-x-full flex flex-col">
+        <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i data-lucide="zap" class="w-5 h-5 text-amber-500"></i>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Event Automations</h3>
+          </div>
+          <button id="closeAutomationDrawerBtn" onclick="closeAutomationsDrawer()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div class="flex-1 p-6 overflow-y-auto space-y-4">
+          <div id="automationRecipesContainer" class="space-y-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.2 AUDIT TRAIL DRAWER -->
+  <div id="auditDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+    <div id="auditDrawerBackdrop" onclick="closeAuditTrailDrawer()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity opacity-0 cursor-pointer"></div>
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div id="auditDrawerPanel" class="w-screen max-w-md bg-white dark:bg-[#18181b] shadow-2xl border-l border-slate-200 dark:border-[#27272a] transform transition-transform translate-x-full flex flex-col">
+        <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i data-lucide="history" class="w-5 h-5 text-slate-600 dark:text-zinc-400"></i>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Audit Trail & Rollback</h3>
+          </div>
+          <button id="closeAuditDrawerBtn" onclick="closeAuditTrailDrawer()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div class="flex-1 p-6 overflow-y-auto space-y-3" id="auditLogContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.3 DB INSPECTOR & LIVE SQL CONSOLE MODAL -->
+  <div id="dbInspectorModal" class="fixed inset-0 z-50 overflow-y-auto hidden flex items-center justify-center p-4">
+    <div id="dbInspectorBackdrop" onclick="closeDbInspectorModalDirect()" class="fixed inset-0 bg-slate-900/80 backdrop-blur-xs cursor-pointer"></div>
+    <div class="relative bg-slate-900 text-slate-100 rounded-2xl max-w-3xl w-full shadow-2xl border border-slate-800 z-10 space-y-4">
+      <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="database" class="w-5 h-5 text-purple-400"></i>
+          <h3 class="text-base font-bold text-white">Database Inspector & Live SQL Console</h3>
+        </div>
+        <button id="closeDbInspectorBtn" onclick="closeDbInspectorModalDirect()" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="px-6 pt-2 flex items-center gap-2 border-b border-slate-800 text-xs font-semibold">
+        <button type="button" id="tabJsonbStoreBtn" onclick="switchInspectorTab('jsonb')" class="px-4 py-2 border-b-2 border-emerald-400 text-white flex items-center gap-1.5">
+          <i data-lucide="code" class="w-3.5 h-3.5 text-emerald-400"></i> JSONB Store
+        </button>
+        <button type="button" id="tabSqlConsoleBtn" onclick="switchInspectorTab('sql')" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-white flex items-center gap-1.5">
+          <i data-lucide="terminal" class="w-3.5 h-3.5 text-blue-400"></i> Live SQL Console
+        </button>
+      </div>
+
+      <div id="inspectorJsonbTab" class="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+        <pre id="jsonbSchemaViewer" class="bg-slate-950 p-4 rounded-xl text-xs font-mono text-emerald-400 overflow-x-auto border border-slate-800"></pre>
+        <pre id="jsonbRecordsViewer" class="bg-slate-950 p-4 rounded-xl text-xs font-mono text-blue-400 overflow-x-auto border border-slate-800 max-h-64"></pre>
+      </div>
+
+      <div id="inspectorSqlTab" class="p-6 space-y-4 max-h-[60vh] overflow-y-auto hidden">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <label class="font-semibold text-slate-300">Run SQL Query (Read-Only SELECT):</label>
+            <div class="flex gap-1.5 text-[11px]">
+              <button type="button" onclick="setSqlQuery('SELECT id, tenant_id, data FROM items LIMIT 20;')" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded">items</button>
+              <button type="button" onclick="setSqlQuery('SELECT id, title, schema_name FROM boards;')" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded">boards</button>
+              <button type="button" onclick="setSqlQuery('SELECT timestamp, user, field, old_val, new_val FROM audit_logs ORDER BY timestamp DESC LIMIT 20;')" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded">audit_logs</button>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <input type="text" id="sqlQueryInput" value="SELECT id, tenant_id, data FROM items LIMIT 10;" class="flex-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-mono text-emerald-400 focus:outline-none">
+            <button type="button" onclick="executeLiveSqlQuery()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1.5">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i> Run
+            </button>
+          </div>
+        </div>
+        <div id="sqlQueryResultContainer" class="space-y-2">
+          <div id="sqlQueryTableWrapper" class="bg-slate-950 rounded-xl border border-slate-800 overflow-x-auto max-h-64 p-2 text-xs font-mono text-slate-200">
+            <div class="text-slate-500 p-4 text-center">Click "Run" to execute query.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-slate-800 flex justify-end">
+        <button id="closeDbInspectorBottomBtn" onclick="closeDbInspectorModalDirect()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg">
+          Close Inspector
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.4 IN-APP AUTH SWITCH MODAL -->
+  <div id="authModal" class="fixed inset-0 z-50 overflow-y-auto hidden flex items-center justify-center p-4">
+    <div id="authModalBackdrop" onclick="closeAuthModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs cursor-pointer"></div>
+    <div class="relative bg-white dark:bg-[#18181b] rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-[#27272a] z-10 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Switch User Profile</h3>
+        <button id="closeAuthModalBtn" onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="flex items-center p-1 bg-slate-100 dark:bg-[#202024] rounded-lg text-xs font-semibold">
+        <button type="button" id="authTabLoginBtn" onclick="switchAuthModalTab('login')" class="flex-1 py-1.5 rounded-md bg-white dark:bg-[#28282e] text-slate-900 dark:text-white shadow-2xs text-center">
+          Sign In
+        </button>
+        <button type="button" id="authTabRegisterBtn" onclick="switchAuthModalTab('register')" class="flex-1 py-1.5 rounded-md text-slate-600 dark:text-slate-400 text-center">
+          Create Account
+        </button>
+      </div>
+      <div id="authModalAlertBox" class="hidden p-3 rounded-lg text-xs font-semibold"></div>
+      
+      <form id="loginForm" class="space-y-3 text-xs">
+        <div>
+          <label for="loginEmail" class="m3-label">Email Address</label>
+          <input id="loginEmail" type="email" required placeholder="admin@openflow.io" class="m3-input-field-no-icon">
+        </div>
+        <div>
+          <label for="loginPassword" class="m3-label">Password</label>
+          <input id="loginPassword" type="password" required placeholder="••••••••" class="m3-input-field-no-icon">
+        </div>
+        <div class="flex gap-2">
+          <button type="submit" id="loginSubmitBtn" class="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-[#27272a] dark:hover:bg-[#38383e] text-white dark:text-white font-semibold rounded-lg">
+            Sign In to Work OS
+          </button>
+          <button type="button" onclick="handleInAppLogin('admin@openflow.io', 'admin123')" class="px-3.5 py-2.5 m3-btn-tonal rounded-lg font-semibold">
+            Instant
+          </button>
+        </div>
+      </form>
+
+      <form id="registerForm" class="space-y-3 text-xs hidden">
+        <div>
+          <label for="regFullName" class="m3-label">Full Name *</label>
+          <input id="regFullName" type="text" required placeholder="e.g. Maria Santos" class="m3-input-field-no-icon">
+        </div>
+        <div>
+          <label for="regEmail" class="m3-label">Email Address *</label>
+          <input id="regEmail" type="email" required placeholder="name@company.com" class="m3-input-field-no-icon">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label for="regPassword" class="m3-label">Password *</label>
+            <input id="regPassword" type="password" required placeholder="••••••••" class="m3-input-field-no-icon">
+          </div>
+          <div>
+            <label for="regConfirmPassword" class="m3-label">Confirm *</label>
+            <input id="regConfirmPassword" type="password" required placeholder="••••••••" class="m3-input-field-no-icon">
+          </div>
+        </div>
+        <div>
+          <label for="regOrg" class="m3-label">Department *</label>
+          <input id="regOrg" type="text" required placeholder="e.g. Operations" class="m3-input-field-no-icon">
+        </div>
+        <button type="submit" id="registerSubmitBtn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 dark:bg-[#27272a] dark:hover:bg-[#38383e] text-white dark:text-white font-semibold rounded-lg">
+          Create Work OS Account
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3.5 INSERT NEW FEATURE MODAL -->
+  <div id="newProjectModal" class="fixed inset-0 z-50 overflow-y-auto hidden flex items-center justify-center p-4">
+    <div id="newProjectBackdrop" onclick="closeInsertModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs cursor-pointer"></div>
+    <div class="relative bg-white dark:bg-[#18181b] rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 dark:border-[#27272a] z-10 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="plus-circle" class="w-5 h-5 text-slate-600 dark:text-zinc-400"></i>
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white">Add New Feature</h3>
+        </div>
+        <button id="closeNewProjectBtn" onclick="closeInsertModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="newProjectForm" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Feature Name *</label>
+          <input id="projTitleInput" type="text" required placeholder="e.g. Automated Citizen Payment Gateway" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 focus:outline-none font-medium">
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Description</label>
+          <textarea id="projDescriptionInput" rows="2" placeholder="Feature scope and acceptance criteria..." class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 focus:outline-none"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Status Stage</label>
+            <select id="projStatusInput" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 focus:outline-none">
+              <option value="Planning">Planning</option>
+              <option value="In Progress" selected>In Progress</option>
+              <option value="Review">Review</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Priority Level</label>
+            <select id="projPriorityInput" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 focus:outline-none">
+              <option value="Critical">Critical</option>
+              <option value="High" selected>High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Owner / Dept (Assignee) *</label>
+          <select id="projDeptInput" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 focus:outline-none cursor-pointer">
+            <!-- Populated dynamically with registered users -->
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Target Release Date</label>
+            <input id="projTimelineInput" type="date" value="2026-12-31" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 font-mono">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Initial Progress %</label>
+            <input id="projProgressInput" type="number" min="0" max="100" value="0" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 font-mono">
+          </div>
+        </div>
+
+        <div id="dynamicCustomFieldsContainer" class="space-y-3 pt-1"></div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" id="cancelNewProjectBtn" onclick="closeInsertModal()" class="px-3.5 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 dark:bg-[#27272a] dark:hover:bg-[#38383e] dark:text-white rounded-lg">
+            Add Feature
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3.6 EDIT FEATURE MODAL -->
+  <div id="editFeatureModal" class="fixed inset-0 z-50 overflow-y-auto hidden flex items-center justify-center p-4">
+    <div id="editFeatureBackdrop" onclick="closeEditFeatureModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs cursor-pointer"></div>
+    <div class="relative bg-white dark:bg-[#18181b] rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-[#27272a] z-10 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="edit-3" class="w-5 h-5 text-slate-600 dark:text-zinc-400"></i>
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white">Edit Feature Details</h3>
+        </div>
+        <button id="closeEditFeatureBtn" onclick="closeEditFeatureModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="editFeatureForm" class="space-y-3 text-xs">
+        <input type="hidden" id="editFeatureIdInput">
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Feature Name *</label>
+          <input id="editFeatureTitleInput" type="text" required class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 font-medium">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Description</label>
+          <textarea id="editFeatureDescInput" rows="2" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Status Stage</label>
+            <select id="editFeatureStatusInput" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900">
+              <option value="Planning">Planning</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Review">Review</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Priority Level</label>
+            <select id="editFeaturePriorityInput" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900">
+              <option value="Critical">Critical</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Owner / Dept (Assignee) *</label>
+          <select id="editFeatureDeptInput" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 cursor-pointer"></select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Target Release Date</label>
+            <input id="editFeatureTimelineInput" type="date" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 font-mono">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Progress %</label>
+            <input id="editFeatureProgressInput" type="number" min="0" max="100" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900 font-mono">
+          </div>
+        </div>
+
+        <div id="dynamicCustomFieldsEditContainer" class="space-y-3 pt-1"></div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" id="cancelEditFeatureBtn" onclick="closeEditFeatureModal()" class="px-3.5 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 dark:bg-[#27272a] dark:hover:bg-[#38383e] dark:text-white rounded-lg">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3.7 DELETE PROJECT CONFIRMATION MODAL -->
+  <div id="deleteProjectModal" class="fixed inset-0 z-50 overflow-y-auto hidden flex items-center justify-center p-4">
+    <div id="deleteProjectBackdrop" onclick="closeDeleteProjectModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs cursor-pointer"></div>
+    <div class="relative bg-white dark:bg-[#18181b] rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-[#27272a] z-10 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 flex items-center justify-center">
+            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">Delete Project Workspace</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Irreversible database action</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeDeleteProjectModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="text-xs text-slate-600 dark:text-slate-300 space-y-2">
+        <p>Are you sure you want to permanently delete <strong id="deleteProjectTargetName" class="text-slate-900 dark:text-white font-bold">this workspace</strong>?</p>
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+        <button type="button" onclick="closeDeleteProjectModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+          Cancel
+        </button>
+        <button type="button" id="confirmDeleteProjectBtn" onclick="executeDeleteCurrentProject()" class="px-4 py-2 text-xs font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg">
+          Permanently Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.8 IMPORT DATASET MODAL -->
+  <div id="importDataModal" class="fixed inset-0 z-50 overflow-y-auto hidden flex items-center justify-center p-4">
+    <div id="importDataBackdrop" onclick="closeImportModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs cursor-pointer"></div>
+    <div class="relative bg-white dark:bg-[#18181b] rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-[#27272a] z-10 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2.5">
+          <i data-lucide="upload-cloud" class="w-5 h-5 text-blue-500"></i>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">Import Dataset into Workspace</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Bulk upload features via CSV or JSON</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeImportModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="flex items-center p-1 bg-slate-100 dark:bg-[#27272a] rounded-lg text-xs font-semibold">
+        <button type="button" id="importTabPasteBtn" onclick="switchImportTab('paste')" class="flex-1 py-1.5 rounded-md bg-white dark:bg-[#18181b] text-slate-900 dark:text-white shadow-2xs text-center">
+          Paste CSV / Text
+        </button>
+        <button type="button" id="importTabFileBtn" onclick="switchImportTab('file')" class="flex-1 py-1.5 rounded-md text-slate-600 dark:text-slate-400 text-center">
+          Upload File
+        </button>
+      </div>
+      <div id="importPasteContainer" class="space-y-2">
+        <textarea id="importPasteText" rows="6" placeholder="Features,Status,Lead,Priority,Target Release,Progress
+Resident Mobile Portal,In Progress,Admin,High,2026-10-15,65
+Automated Billing Engine,Completed,Admin,Critical,2026-09-01,100" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-mono bg-slate-50 dark:bg-[#121214] text-slate-800 dark:text-slate-200 focus:outline-none"></textarea>
+      </div>
+      <div id="importFileContainer" class="space-y-2 hidden">
+        <input type="file" id="importFileInput" accept=".csv,.json" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-slate-900 file:text-white cursor-pointer">
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+        <button type="button" onclick="closeImportModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 rounded-lg">
+          Cancel
+        </button>
+        <button type="button" id="executeImportBtn" onclick="executeImportData()" class="px-4 py-2 text-xs font-semibold text-white bg-slate-900 dark:bg-[#27272a] dark:text-white dark:hover:bg-[#38383e] dark:border dark:border-[#3f3f46] rounded-lg">
+          Import Dataset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.9 NEW SCHEMA / PROJECT MODAL -->
+  <div id="newSchemaModal" class="fixed inset-0 z-50 overflow-y-auto hidden flex items-center justify-center p-4">
+    <div id="newSchemaBackdrop" onclick="closeNewSchemaModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs cursor-pointer"></div>
+    <div class="relative bg-white dark:bg-[#18181b] rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-[#27272a] z-10 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Create New Project Workspace</h3>
+        <button id="closeNewSchemaBtn" onclick="closeNewSchemaModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <form id="newSchemaForm" onsubmit="event.preventDefault(); handleCreateNewSchema(event);" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Project Name *</label>
+          <input id="newSchemaName" type="text" required placeholder="e.g. Bayan ng Tumauini Portal" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-medium">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Project Website URL</label>
+          <input id="newSchemaUrl" type="url" placeholder="https://example.gov.ph" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-mono">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Description</label>
+          <textarea id="newSchemaDesc" rows="2" placeholder="Workspace objectives..." class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"></textarea>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" id="cancelNewSchemaBtn" onclick="closeNewSchemaModal()" class="px-3.5 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 rounded-lg">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-slate-900 dark:bg-[#27272a] dark:text-white dark:hover:bg-[#38383e] dark:border dark:border-[#3f3f46] rounded-lg">
+            Create Project
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3.10 ADD COLUMN MODAL -->
+  <div id="addColumnModal" class="fixed inset-0 z-50 overflow-y-auto hidden flex items-center justify-center p-4">
+    <div id="addColumnBackdrop" onclick="closeAddColumnModalDirect()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs cursor-pointer"></div>
+    <div class="relative bg-white dark:bg-[#18181b] rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-[#27272a] z-10 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Add Dynamic Column</h3>
+        <button id="closeAddColumnBtn" onclick="closeAddColumnModalDirect()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Column Title *</label>
+          <input id="newColTitle" type="text" placeholder="e.g. Budget (PHP), Delivery Phase" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-medium">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Column Type</label>
+          <select id="newColType" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+            <option value="text">Text (General Description)</option>
+            <option value="status">Status Stage (Workflow)</option>
+            <option value="person">Assignee (Registered User)</option>
+            <option value="currency">Currency (₱ Budget)</option>
+            <option value="progress">Progress (0-100%)</option>
+            <option value="date">Date (Milestone Target)</option>
+          </select>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" id="cancelAddColumnBtn" onclick="closeAddColumnModalDirect()" class="px-3.5 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 rounded-lg">
+            Cancel
+          </button>
+          <button type="button" id="saveNewColumnBtn" onclick="handleCreateColumn()" class="px-4 py-2 text-xs font-semibold text-white bg-slate-900 dark:bg-[#27272a] dark:text-white dark:hover:bg-[#38383e] dark:border dark:border-[#3f3f46] rounded-lg">
+            Create Column
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.11 RBAC MATRIX MODAL -->
+  <div id="rbacMatrixModal" class="fixed inset-0 z-50 overflow-y-auto hidden flex items-center justify-center p-4">
+    <div id="rbacMatrixBackdrop" onclick="closeRbacMatrixModalDirect()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs cursor-pointer"></div>
+    <div class="relative bg-white dark:bg-[#18181b] rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 dark:border-[#27272a] z-10 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Role-Based Access Control (RBAC) Matrix</h3>
+        <button id="closeRbacMatrixBtn" onclick="closeRbacMatrixModalDirect()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="text-xs text-slate-600 dark:text-slate-300">
+        <p class="mb-3">OpenFlow enforces cryptographic role-based authorization across all database records and schema operations.</p>
+      </div>
+      <div class="flex justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
+        <button id="closeRbacMatrixBottomBtn" onclick="closeRbacMatrixModalDirect()" class="px-4 py-2 bg-slate-900 dark:bg-[#27272a] text-white dark:text-white text-xs font-semibold rounded-lg">
+          Dismiss
+        </button>
+      </div>
+    </div>
+  </div>
+
+    <!-- 3.12 LIVE WEBSITE PREVIEW MODAL -->
+  <div id="websitePreviewModal" class="fixed inset-0 z-50 overflow-hidden hidden flex flex-col bg-slate-900/70 dark:bg-black/80 backdrop-blur-md">
+    <!-- Header Bar based on OpenFlow M3 UI Design -->
+    <div class="h-14 bg-white dark:bg-[#18181b] border-b border-slate-200 dark:border-[#27272a] px-5 sm:px-6 flex items-center justify-between z-20 shadow-2xs">
+      <!-- Left: Logo & Project URL -->
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-[#27272a] text-slate-900 dark:text-slate-100 flex items-center justify-center font-bold flex-shrink-0 shadow-2xs border border-slate-200 dark:border-[#38383e]">
+          <i data-lucide="globe" class="w-4 h-4"></i>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <h3 id="previewModalTitle" class="text-xs font-extrabold text-slate-900 dark:text-white truncate">Live Website Showcase</h3>
+            <span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hidden sm:inline-block">LIVE SIMULATOR</span>
+          </div>
+          <div class="flex items-center gap-1.5 text-[10px] text-slate-400 font-mono truncate">
+            <span id="previewModalUrlBadge" class="truncate">https://openflow.io</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: Viewport Mode Segmented Switcher -->
+      <div class="flex items-center p-1 bg-slate-100 dark:bg-[#202024] rounded-xl border border-slate-200 dark:border-[#27272a] gap-1 shadow-2xs">
+        <button type="button" id="viewportDesktopBtn" onclick="setWebsiteViewport('desktop')" class="viewport-toggle-btn px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all active bg-white dark:bg-[#27272a] text-slate-900 dark:text-white shadow-2xs border border-transparent dark:border-[#38383e]" title="Desktop View (100%)">
+          <i data-lucide="monitor" class="w-3.5 h-3.5 text-slate-900 dark:text-white"></i>
+          <span class="hidden md:inline">Desktop</span>
+        </button>
+        <button type="button" id="viewportTabletBtn" onclick="setWebsiteViewport('tablet')" class="viewport-toggle-btn px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" title="Tablet View (768px)">
+          <i data-lucide="tablet" class="w-3.5 h-3.5 text-slate-900 dark:text-slate-100"></i>
+          <span class="hidden md:inline">Tablet</span>
+        </button>
+        <button type="button" id="viewportMobileBtn" onclick="setWebsiteViewport('mobile')" class="viewport-toggle-btn px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" title="Mobile View (390px)">
+          <i data-lucide="smartphone" class="w-3.5 h-3.5 text-slate-900 dark:text-slate-100"></i>
+          <span class="hidden md:inline">Mobile</span>
+        </button>
+      </div>
+
+      <!-- Right: Action Icons & Close -->
+      <div class="flex items-center gap-1.5 flex-shrink-0">
+        <button type="button" id="openExternalWebsiteBtn" onclick="openActiveWebsiteExternal()" class="p-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" title="Open in New Tab">
+          <i data-lucide="external-link" class="w-4 h-4 text-slate-900 dark:text-slate-100"></i>
+        </button>
+        <button type="button" onclick="refreshWebsiteIframe()" class="p-1.5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all" title="Reload Frame">
+          <i data-lucide="refresh-cw" class="w-4 h-4 text-slate-900 dark:text-slate-100"></i>
+        </button>
+        <button type="button" id="closeWebsiteModalBtn" onclick="closeProjectWebsiteModal()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all ml-1" title="Close Preview">
+          <i data-lucide="x" class="w-4 h-4 text-slate-900 dark:text-slate-100"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Simulator Canvas & Device Frame -->
+    <div class="flex-1 w-full bg-slate-100/90 dark:bg-[#0c0c0e]/95 p-4 sm:p-6 flex items-center justify-center overflow-hidden">
+      <div id="websiteIframeContainer" class="w-full h-full max-w-full rounded-2xl overflow-hidden border border-slate-200 dark:border-[#27272a] bg-white shadow-2xl transition-all duration-300">
+        <iframe id="websiteIframe" class="w-full h-full border-0" src="about:blank"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.13 PROJECT WORKSPACES MANAGER MODAL -->
+  <div id="projectManagerModal" class="fixed inset-0 z-50 overflow-y-auto hidden flex items-center justify-center p-4">
+    <div id="projectManagerBackdrop" onclick="closeProjectManagerModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs cursor-pointer"></div>
+    <div class="relative bg-white dark:bg-[#18181b] rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 dark:border-[#27272a] z-10 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="folder-kanban" class="w-5 h-5 text-slate-600 dark:text-zinc-400"></i>
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white">Project Workspaces Manager</h3>
+        </div>
+        <button id="closeProjectManagerBtn" onclick="closeProjectManagerModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div id="projectWorkspacesList" class="space-y-2 max-h-72 overflow-y-auto"></div>
+      <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
+        <button type="button" id="createProjectFromManagerBtn" onclick="createProjectFromManager()" class="px-3.5 py-2 text-xs font-semibold text-white bg-slate-900 dark:bg-[#27272a] dark:text-white dark:hover:bg-[#38383e] dark:border dark:border-[#3f3f46] rounded-lg flex items-center gap-1.5">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i> Create New Project
+        </button>
+        <button type="button" id="dismissProjectManagerBtn" onclick="closeProjectManagerModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 rounded-lg">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.14 USER MANAGEMENT MODAL -->
+  <div id="userManagementModal" class="fixed inset-0 z-50 overflow-y-auto hidden flex items-center justify-center p-4">
+    <div id="userManagementBackdrop" onclick="closeUserDatabaseModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs cursor-pointer"></div>
+    <div class="relative bg-white dark:bg-[#18181b] rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 dark:border-[#27272a] z-10 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="users" class="w-5 h-5 text-slate-600 dark:text-zinc-400"></i>
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white">User Management & Permissions</h3>
+        </div>
+        <button id="closeUserManagementBtn" onclick="closeUserDatabaseModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="max-h-72 overflow-y-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 dark:bg-[#202024] text-slate-500 uppercase font-semibold">
+            <tr>
+              <th class="p-2.5">User</th>
+              <th class="p-2.5">Role</th>
+              <th class="p-2.5">Organization</th>
+              <th class="p-2.5 text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+        </table>
+      </div>
+      <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
+        <button type="button" id="addUserFromModalBtn" onclick="addUserFromModal()" class="px-3.5 py-2 text-xs font-semibold text-white bg-slate-900 dark:bg-[#27272a] dark:text-white dark:hover:bg-[#38383e] dark:border dark:border-[#3f3f46] rounded-lg flex items-center gap-1.5">
+          <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Register New User
+        </button>
+        <button type="button" id="closeUserManagementBottomBtn" onclick="closeUserDatabaseModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 rounded-lg">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- 3.15 EDIT WORKSPACE MODAL -->
+  <div id="editWorkspaceModal" class="fixed inset-0 z-50 overflow-y-auto hidden flex items-center justify-center p-4">
+    <div id="editWorkspaceBackdrop" onclick="closeEditWorkspaceModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs cursor-pointer"></div>
+    <div class="relative bg-white dark:bg-[#18181b] rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-[#27272a] z-10 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="edit-3" class="w-5 h-5 text-slate-600 dark:text-zinc-400"></i>
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white">Edit Workspace Details</h3>
+        </div>
+        <button type="button" onclick="closeEditWorkspaceModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <form id="editWorkspaceForm" onsubmit="event.preventDefault(); handleSaveWorkspaceEdit();" class="space-y-3 text-xs">
+        <input type="hidden" id="editWorkspaceTenantId">
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Workspace Title *</label>
+          <input id="editWorkspaceTitle" type="text" required class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-medium">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Website URL</label>
+          <input id="editWorkspaceUrl" type="url" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-mono">
+        </div>
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Description</label>
+          <textarea id="editWorkspaceDesc" rows="3" class="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200"></textarea>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" onclick="closeEditWorkspaceModal()" class="px-3.5 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 rounded-lg">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-slate-900 dark:bg-[#27272a] dark:text-white dark:hover:bg-[#38383e] dark:border dark:border-[#3f3f46] rounded-lg">
+            Save Workspace
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  
+  <!-- ==========================================
+       3.16 FEATURE DETAIL & ACTIVITY DRAWER
+       ========================================== -->
+  <div id="featureDetailDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+    <div id="featureDrawerBackdrop" onclick="closeFeatureDetailDrawer()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity opacity-0 cursor-pointer"></div>
+    
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div id="featureDrawerPanel" class="w-screen max-w-xl bg-white dark:bg-[#18181b] shadow-2xl border-l border-slate-200 dark:border-[#27272a] transform transition-transform translate-x-full flex flex-col">
+        
+        <!-- Drawer Top Header -->
+        <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 space-y-3">
+          <div class="flex items-start justify-between gap-3">
+            <div class="space-y-1 min-w-0 flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span id="drawerStatusBadge" class="status-badge status-planning text-[10px]">Planning</span>
+                <span id="drawerPriorityBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider priority-medium">Medium</span>
+                <span id="drawerAssigneeBadge" class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1 font-medium">
+                  <i data-lucide="user" class="w-3 h-3"></i> <span id="drawerAssigneeText">System Administrator</span>
+                </span>
+              </div>
+              <h2 id="drawerFeatureTitle" class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight leading-snug break-words">
+                Feature Title
+              </h2>
+            </div>
+            
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+              <button type="button" id="drawerQuickEditBtn" onclick="openEditFeatureFromDrawer()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-[#27272a] transition-colors" title="Edit Full Feature Details">
+                <i data-lucide="edit-3" class="w-4 h-4"></i>
+              </button>
+              <button type="button" id="closeFeatureDrawerBtn" onclick="closeFeatureDetailDrawer()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-[#27272a] transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Drawer Navigation Tabs -->
+          <div class="flex items-center p-1 bg-slate-100 dark:bg-[#202024] rounded-xl text-xs font-semibold overflow-x-auto">
+            <button type="button" id="drawerTabCommentsBtn" onclick="switchDetailDrawerTab('comments')" class="flex-1 py-1.5 px-3 rounded-lg active bg-white dark:bg-[#27272a] text-slate-900 dark:text-white shadow-2xs transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="message-square" class="w-3.5 h-3.5"></i>
+              <span>Discussion</span>
+              <span id="drawerCommentCountPill" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-[#3a3a42] font-bold">0</span>
+            </button>
+            <button type="button" id="drawerTabSubtasksBtn" onclick="switchDetailDrawerTab('subtasks')" class="flex-1 py-1.5 px-3 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="check-square" class="w-3.5 h-3.5"></i>
+              <span>Checklist</span>
+              <span id="drawerSubtaskCountPill" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-[#3a3a42] font-bold">0/0</span>
+            </button>
+            <button type="button" id="drawerTabAttachmentsBtn" onclick="switchDetailDrawerTab('attachments')" class="flex-1 py-1.5 px-3 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+              <span>Attachments</span>
+              <span id="drawerAttachmentCountPill" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-[#3a3a42] font-bold">0</span>
+            </button>
+            <button type="button" id="drawerTabDetailsBtn" onclick="switchDetailDrawerTab('details')" class="flex-1 py-1.5 px-3 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="info" class="w-3.5 h-3.5"></i>
+              <span>Scope</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Drawer Body Content Area -->
+        <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
+          
+          <!-- TAB 1: DISCUSSION & COMMENTS STREAM -->
+          <div id="drawerCommentsSection" class="space-y-4">
+            <div id="drawerCommentsList" class="space-y-3">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <!-- Comment Composer -->
+            <div class="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2.5">
+              <div class="flex items-center gap-1 text-[11px] text-slate-400 overflow-x-auto pb-1">
+                <span class="font-semibold text-slate-500">Quick Mention:</span>
+                <button type="button" onclick="insertMention('@admin')" class="px-2 py-0.5 bg-slate-100 dark:bg-[#27272a] hover:bg-slate-200 dark:hover:bg-[#38383e] rounded-md font-mono text-slate-700 dark:text-slate-300 transition-colors">@Admin</button>
+                <button type="button" onclick="insertMention('@qa_security')" class="px-2 py-0.5 bg-slate-100 dark:bg-[#27272a] hover:bg-slate-200 dark:hover:bg-[#38383e] rounded-md font-mono text-slate-700 dark:text-slate-300 transition-colors">@QA</button>
+                <button type="button" onclick="insertMention('@engineering')" class="px-2 py-0.5 bg-slate-100 dark:bg-[#27272a] hover:bg-slate-200 dark:hover:bg-[#38383e] rounded-md font-mono text-slate-700 dark:text-slate-300 transition-colors">@Engineering</button>
+              </div>
+
+              <div class="space-y-2">
+                <textarea id="drawerCommentInput" rows="3" placeholder="Share an update, design note, or decision... Press Ctrl+Enter to post" class="w-full px-3 py-2.5 bg-slate-50 dark:bg-[#121214] border border-slate-200 dark:border-[#2c2c32] rounded-xl text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400"></textarea>
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] text-slate-400">Markdown formatting & @mentions supported</span>
+                  <button type="button" id="postCommentBtn" onclick="submitDrawerComment()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-[#27272a] dark:hover:bg-[#38383e] text-white dark:text-white text-xs font-semibold rounded-lg shadow-2xs transition-all flex items-center gap-1.5">
+                    <i data-lucide="send" class="w-3.5 h-3.5"></i> Post Comment
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: CHECKLIST SUB-TASKS -->
+          <div id="drawerSubtasksSection" class="space-y-4 hidden">
+            <!-- Progress summary -->
+            <div class="p-3.5 bg-slate-50 dark:bg-[#202024] rounded-xl border border-slate-200 dark:border-[#2c2c32] space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-bold text-slate-800 dark:text-slate-200">Sub-task Checklist Progress</span>
+                <span id="subtaskProgressPercentText" class="font-mono font-bold text-emerald-600 dark:text-emerald-400">0%</span>
+              </div>
+              <div class="h-2 w-full bg-slate-200 dark:bg-[#2a2a30] rounded-full overflow-hidden">
+                <div id="subtaskProgressBar" class="h-full bg-emerald-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Subtask list -->
+            <div id="drawerSubtasksList" class="space-y-2">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <!-- Add subtask input -->
+            <form onsubmit="event.preventDefault(); submitDrawerSubtask();" class="pt-2 flex items-center gap-2">
+              <input type="text" id="drawerSubtaskInput" placeholder="Add a new checklist step (e.g. API Documentation)..." class="flex-1 px-3 py-2 bg-slate-50 dark:bg-[#121214] border border-slate-200 dark:border-[#2c2c32] rounded-xl text-xs text-slate-800 dark:text-slate-200 focus:outline-none">
+              <button type="submit" class="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-[#27272a] dark:hover:bg-[#38383e] text-white dark:text-white text-xs font-semibold rounded-xl flex items-center gap-1 flex-shrink-0">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add
+              </button>
+            </form>
+          </div>
+
+          <!-- TAB 3: ATTACHMENTS & RESOURCES -->
+          <div id="drawerAttachmentsSection" class="space-y-4 hidden">
+            <div id="drawerAttachmentsList" class="space-y-2">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <!-- Add attachment form -->
+            <div class="p-4 bg-slate-50 dark:bg-[#202024] rounded-xl border border-slate-200 dark:border-[#2c2c32] space-y-3">
+              <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                <i data-lucide="link-2" class="w-3.5 h-3.5 text-blue-500"></i> Attach Document or External URL
+              </h4>
+              <form onsubmit="event.preventDefault(); submitDrawerAttachment();" class="space-y-2.5 text-xs">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Resource Title *</label>
+                  <input type="text" id="drawerAttachmentName" required placeholder="e.g. Figma Architecture Specs / API Swagger" class="w-full px-3 py-1.5 bg-white dark:bg-[#121214] border border-slate-200 dark:border-[#2c2c32] rounded-lg text-slate-800 dark:text-slate-200 focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">URL / Link *</label>
+                  <input type="url" id="drawerAttachmentUrl" required placeholder="https://figma.com/... or https://github.com/..." class="w-full px-3 py-1.5 bg-white dark:bg-[#121214] border border-slate-200 dark:border-[#2c2c32] rounded-lg text-slate-800 dark:text-slate-200 font-mono focus:outline-none">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Resource Category</label>
+                  <select id="drawerAttachmentType" class="w-full px-3 py-1.5 bg-white dark:bg-[#121214] border border-slate-200 dark:border-[#2c2c32] rounded-lg text-slate-800 dark:text-slate-200 focus:outline-none">
+                    <option value="figma">🎨 Figma / UI Mockup</option>
+                    <option value="github">🐙 GitHub Repo / Pull Request</option>
+                    <option value="document">📄 Specification Document (PDF/Doc)</option>
+                    <option value="link" selected>🔗 General Web Resource Link</option>
+                  </select>
+                </div>
+                <div class="pt-1 flex justify-end">
+                  <button type="submit" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-[#27272a] dark:hover:bg-[#38383e] text-white dark:text-white text-xs font-semibold rounded-lg flex items-center gap-1.5">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> Attach Resource
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- TAB 4: DETAILS & SCOPE -->
+          <div id="drawerDetailsSection" class="space-y-4 hidden text-xs">
+            <div class="space-y-1">
+              <label class="block font-semibold text-slate-500 dark:text-slate-400 text-[11px]">Feature Scope & Acceptance Criteria</label>
+              <div id="drawerScopeDesc" class="p-3 bg-slate-50 dark:bg-[#202024] rounded-xl border border-slate-200 dark:border-[#2c2c32] text-slate-800 dark:text-slate-200 whitespace-pre-wrap">
+                No description provided.
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-2">
+              <div class="p-3 bg-slate-50 dark:bg-[#202024] rounded-xl border border-slate-200 dark:border-[#2c2c32]">
+                <div class="text-[10px] text-slate-400 font-semibold uppercase">Target Release</div>
+                <div id="drawerTimelineVal" class="font-mono font-bold text-slate-800 dark:text-slate-200 mt-1">2026-12-31</div>
+              </div>
+              <div class="p-3 bg-slate-50 dark:bg-[#202024] rounded-xl border border-slate-200 dark:border-[#2c2c32]">
+                <div class="text-[10px] text-slate-400 font-semibold uppercase">Completion</div>
+                <div id="drawerProgressVal" class="font-mono font-bold text-slate-800 dark:text-slate-200 mt-1">0%</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       3.18 WORKSPACE PLANNER & SCRATCHPAD DRAWER
+       ========================================== -->
+  <div id="plannerDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+    <div id="plannerDrawerBackdrop" onclick="closePlannerDrawer()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity opacity-0 cursor-pointer"></div>
+    
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div id="plannerDrawerPanel" class="w-screen max-w-xl bg-white dark:bg-[#18181b] shadow-2xl border-l border-slate-200 dark:border-[#27272a] transform transition-transform translate-x-full flex flex-col">
+        
+        <!-- Drawer Top Header -->
+        <div class="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 space-y-3">
+          <div class="flex items-start justify-between gap-3">
+            <div class="space-y-1 min-w-0 flex-1">
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#27272a] text-slate-700 dark:text-slate-300 font-semibold border border-slate-200 dark:border-[#38383e] flex items-center gap-1">
+                  <i data-lucide="database" class="w-3 h-3 text-slate-900 dark:text-slate-100"></i> SQLite Store
+                </span>
+                <span id="plannerSaveStatus" class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">Auto-saved</span>
+              </div>
+              <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight leading-snug">
+                Workspace Planner & Scratchpad
+              </h2>
+              <p id="plannerProjectSub" class="text-xs text-slate-500 dark:text-slate-400 truncate font-medium">
+                Active Project Notes & Action Items
+              </p>
+            </div>
+            
+            <button type="button" onclick="closePlannerDrawer()" class="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-[#27272a] transition-colors">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+
+          <!-- Drawer Navigation Tabs -->
+          <div class="flex items-center p-1 bg-slate-100 dark:bg-[#202024] rounded-xl text-xs font-semibold">
+            <button type="button" id="plannerTabNotesBtn" onclick="switchPlannerTab('notes')" class="flex-1 py-1.5 px-3 rounded-lg active bg-white dark:bg-[#27272a] text-slate-900 dark:text-white shadow-2xs transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+              <span>Scratchpad Notes</span>
+            </button>
+            <button type="button" id="plannerTabTodosBtn" onclick="switchPlannerTab('todos')" class="flex-1 py-1.5 px-3 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center gap-1.5">
+              <i data-lucide="check-square" class="w-3.5 h-3.5"></i>
+              <span>Action Items</span>
+              <span id="plannerTodoTabCount" class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-200 dark:bg-[#3a3a42] font-bold">0</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Drawer Body Content -->
+        <div class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-5">
+          
+          <!-- TAB 1: NOTES & SCRATCHPAD -->
+          <div id="plannerNotesSection" class="space-y-3">
+            <div class="flex items-center justify-between text-xs text-slate-500">
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="insertNoteTimestamp()" class="px-2 py-1 bg-slate-100 dark:bg-[#27272a] hover:bg-slate-200 rounded text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+                  + Timestamp
+                </button>
+                <button type="button" onclick="insertNoteBullet()" class="px-2 py-1 bg-slate-100 dark:bg-[#27272a] hover:bg-slate-200 rounded text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+                  • Bullet
+                </button>
+              </div>
+              <span id="plannerCharCount" class="font-mono text-[10px] text-slate-400">0 characters</span>
+            </div>
+
+            <textarea id="plannerNotesTextarea" oninput="handlePlannerNoteInput()" rows="18" placeholder="Type project plans, architectural specs, sprint goals, or meeting minutes here... Auto-saved directly to local database." class="w-full p-4 rounded-xl border border-slate-200 dark:border-[#27272a] bg-slate-50/50 dark:bg-[#121214] text-slate-900 dark:text-slate-100 text-xs font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-slate-400 dark:focus:ring-slate-600 resize-none"></textarea>
+          </div>
+
+          <!-- TAB 2: ACTION ITEMS & TODOS -->
+          <div id="plannerTodosSection" class="space-y-4 hidden">
+            
+            <!-- Add Todo Input -->
+            <form onsubmit="event.preventDefault(); addPlannerTodoItem();" class="flex gap-2">
+              <input type="text" id="newPlannerTodoInput" placeholder="Add an action item or sprint task..." required class="flex-1 px-3 py-2 border border-slate-200 dark:border-[#27272a] rounded-xl bg-slate-50 dark:bg-[#121214] text-slate-900 dark:text-slate-100 text-xs focus:outline-none">
+              
+              <select id="newPlannerTodoPriority" class="px-2.5 py-2 border border-slate-200 dark:border-[#27272a] rounded-xl bg-slate-50 dark:bg-[#121214] text-slate-800 dark:text-slate-200 text-xs font-semibold focus:outline-none">
+                <option value="Critical">Critical</option>
+                <option value="High">High</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Low">Low</option>
+              </select>
+
+              <button type="submit" class="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-[#27272a] dark:hover:bg-[#38383e] text-white dark:text-white text-xs font-semibold rounded-xl transition-colors flex items-center gap-1">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add
+              </button>
+            </form>
+
+            <div class="text-[11px] text-slate-400 flex items-center justify-between">
+              <span>Action Items & Sprint Tasks</span>
+              <span id="plannerTodoProgressText" class="font-bold text-slate-600 dark:text-slate-300">0/0 completed</span>
+            </div>
+
+            <!-- Todos List -->
+            <div id="plannerTodosList" class="space-y-2">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 3.19 INSERT EXPENSE / CAPEX MODAL -->
+  <div id="newExpenseModal" class="fixed inset-0 z-50 overflow-y-auto hidden items-center justify-center p-4" style="display: none;">
+    <div id="newExpenseBackdrop" onclick="closeExpenseModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs cursor-pointer"></div>
+    <div class="relative bg-white dark:bg-[#18181b] rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-[#27272a] z-10 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+            <i data-lucide="receipt" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">Add Expense / Budget Line Item</h3>
+            <p class="text-[11px] text-slate-400">Record capex, personnel retainers, or operational disbursements</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeExpenseModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="newExpenseForm" onsubmit="event.preventDefault(); submitExpenseForm();" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Expense / Line Item Title *</label>
+          <input id="expTitleInput" type="text" required placeholder="e.g. Cloud Server Hosting & Database Quota" class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-slate-900 dark:text-slate-100 focus:outline-none font-medium">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Category *</label>
+            <select id="expCategoryInput" class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-slate-800 dark:text-slate-200 font-semibold focus:outline-none">
+              <option value="Infrastructure">Infrastructure</option>
+              <option value="Personnel">Personnel</option>
+              <option value="Governance">Governance & Audit</option>
+              <option value="Technology">Technology & Licenses</option>
+              <option value="Operations" selected>Operations</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Payment Status *</label>
+            <select id="expStatusInput" class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-slate-800 dark:text-slate-200 font-semibold focus:outline-none">
+              <option value="Approved">Approved</option>
+              <option value="Pending Voucher">Pending Voucher</option>
+              <option value="Disbursed">Disbursed (Paid)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Allocated Budget (₱) *</label>
+            <input id="expAllocatedInput" type="number" step="0.01" required placeholder="500000" class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-slate-900 dark:text-slate-100 focus:outline-none font-mono">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Actual Disbursed (₱) *</label>
+            <input id="expSpentInput" type="number" step="0.01" required placeholder="350000" class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-slate-900 dark:text-slate-100 focus:outline-none font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Disbursement Date</label>
+          <input id="expDateInput" type="date" class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-slate-900 dark:text-slate-100 focus:outline-none font-mono">
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Notes / PO Reference</label>
+          <textarea id="expNotesInput" rows="2" placeholder="Purchase order reference, receipt number, or approval notes..." class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-slate-900 dark:text-slate-100 focus:outline-none"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" onclick="closeExpenseModal()" class="px-3.5 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#27272a] rounded-lg">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-slate-900 dark:bg-[#27272a] dark:text-white dark:hover:bg-[#38383e] dark:border dark:border-[#3f3f46] rounded-lg shadow-xs hover:bg-slate-800 transition-colors flex items-center gap-1.5">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Save Expense Item
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- 3.20 ADD TEAM SHARE STAKEHOLDER MODAL -->
+  <div id="addTeamShareModal" class="fixed inset-0 z-50 overflow-y-auto hidden items-center justify-center p-4" style="display: none;">
+    <div id="addTeamShareBackdrop" onclick="closeTeamShareModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs cursor-pointer"></div>
+    <div class="relative bg-white dark:bg-[#18181b] rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-[#27272a] z-10 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+            <i data-lucide="user-plus" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">Add Team Member Share</h3>
+            <p class="text-[11px] text-slate-400">Configure salary revenue percentage split</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeTeamShareModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="addTeamShareForm" onsubmit="event.preventDefault(); submitTeamShareForm();" class="space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Select Registered User Account *</label>
+          <select id="shareMemberSelect" onchange="handleShareUserSelect(this.value)" class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-slate-900 dark:text-slate-100 font-semibold focus:outline-none cursor-pointer">
+            <option value="">-- Choose Registered Account --</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Member Full Name *</label>
+          <input id="shareMemberNameInput" type="text" required placeholder="e.g. Azarel Clight Nadal" class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-slate-900 dark:text-slate-100 focus:outline-none font-medium">
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Role / Responsibility & Organization</label>
+          <input id="shareMemberRoleInput" type="text" placeholder="e.g. Lead Architect & Founder (Kryptiah)" class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-slate-900 dark:text-slate-100 focus:outline-none font-medium">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Revenue Share (%) *</label>
+            <input id="shareMemberPctInput" type="number" step="0.1" min="0" max="100" required placeholder="15" class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-slate-900 dark:text-slate-100 focus:outline-none font-mono font-bold">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Payout Status</label>
+            <select id="shareMemberStatusInput" class="w-full px-3 py-2 border border-slate-200 dark:border-[#38383e] rounded-xl bg-slate-50 dark:bg-[#121214] text-slate-800 dark:text-slate-200 font-semibold focus:outline-none">
+              <option value="Ready for Payout" selected>Ready for Payout</option>
+              <option value="Disbursed">Disbursed (Paid)</option>
+              <option value="Pending Collection">Pending Collection</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <button type="button" onclick="closeTeamShareModal()" class="px-3.5 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#27272a] rounded-lg">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 text-xs font-semibold text-white bg-slate-900 dark:bg-[#27272a] dark:text-white dark:hover:bg-[#38383e] dark:border dark:border-[#3f3f46] rounded-lg shadow-xs hover:bg-slate-800 transition-colors flex items-center gap-1.5">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Add Member
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- 3.21 OFFICIAL TEAM PAYSLIP / PAYOUT VOUCHER MODAL -->
+  <div id="payslipModal" class="fixed inset-0 z-50 overflow-y-auto hidden flex items-center justify-center p-4">
+    <div id="payslipBackdrop" onclick="closePayslipModal()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs cursor-pointer"></div>
+    <div class="relative bg-white dark:bg-[#18181b] rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-[#27272a] z-10 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+            <i data-lucide="receipt" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">Official Payout Voucher & Payslip</h3>
+            <p class="text-[11px] text-slate-400">Software System Sales Revenue Distribution</p>
+          </div>
+        </div>
+        <button type="button" onclick="closePayslipModal()" class="text-slate-400 hover:text-slate-600 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div id="payslipModalContent" class="space-y-4 text-xs">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+        <button type="button" onclick="window.print()" class="px-3.5 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#27272a] rounded-lg flex items-center gap-1.5">
+          <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print Voucher
+        </button>
+        <button type="button" onclick="closePayslipModal()" class="px-4 py-2 text-xs font-semibold text-white bg-slate-900 dark:bg-[#27272a] dark:text-white dark:hover:bg-[#38383e] dark:border dark:border-[#3f3f46] rounded-lg shadow-xs hover:bg-slate-800 transition-colors">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Core JavaScript Application Engine -->
+  <script src="app.js"></script>
+
+</body>
+</html>
