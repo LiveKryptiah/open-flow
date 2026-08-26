@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initGatewayListeners();
   initEventListeners();
   checkAuthAndInitialize();
+  initNotificationsEngine();
 });
 
 function initTheme() {
@@ -570,6 +571,15 @@ async function executeGatewayRegister() {
 }
 
 function initEventListeners() {
+  document.addEventListener('click', (e) => {
+    const notifBtn = document.getElementById('notificationBellBtn');
+    const notifMenu = document.getElementById('notificationDropdownMenu');
+    if (notifMenu && !notifMenu.classList.contains('hidden')) {
+      if (!notifMenu.contains(e.target) && (!notifBtn || !notifBtn.contains(e.target))) {
+        closeNotificationDropdown();
+      }
+    }
+  });
   // 0. Theme initialization complete (handlers bound via inline onclick)
 
   // 1. Outside Click Dismissal for Dropdowns
@@ -6504,3 +6514,254 @@ window.convertPlannerTodoToFeature = convertPlannerTodoToFeature;
 window.handleShareUserSelect = handleShareUserSelect;
 
 window.setAppAuthScreen = setAppAuthScreen;
+
+
+// =========================================================================
+// 17. REAL-TIME NOTIFICATION CENTER & ACTIVITY FEED ENGINE
+// =========================================================================
+
+let activeNotifications = [];
+let currentNotificationFilter = 'all';
+
+function initNotificationsEngine() {
+  const saved = localStorage.getItem(`openflow_notifs_${currentTenantKey}`);
+  if (saved) {
+    try {
+      activeNotifications = JSON.parse(saved);
+    } catch(e) {
+      activeNotifications = [];
+    }
+  } else {
+    // Default initial seed notifications
+    activeNotifications = [
+      {
+        id: `notif_${Date.now()}_1`,
+        type: 'checklist',
+        title: 'Subtask Completed',
+        message: 'Azarel Clight completed "API Authentication & Token Verification"',
+        author: 'Azarel Clight Nadal',
+        role: 'Lead Architect',
+        timestamp: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
+        read: false
+      },
+      {
+        id: `notif_${Date.now()}_2`,
+        type: 'mention',
+        title: 'Team Mention',
+        message: '@System Administrator please review the municipal telemetry export spec',
+        author: 'Azarel Clight Nadal',
+        role: 'Lead Architect',
+        timestamp: new Date(Date.now() - 1000 * 60 * 25).toISOString(),
+        read: false
+      },
+      {
+        id: `notif_${Date.now()}_3`,
+        type: 'system',
+        title: 'Budget Allocated',
+        message: 'System valuation pool updated to ₱1,500,000 for active roadmap release',
+        author: 'System Admin',
+        role: 'Root Admin',
+        timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+        read: false
+      }
+    ];
+    saveNotifications();
+  }
+
+  updateNotificationBadge();
+  renderNotificationFeed('all');
+}
+
+function saveNotifications() {
+  try {
+    localStorage.setItem(`openflow_notifs_${currentTenantKey}`, JSON.stringify(activeNotifications.slice(0, 50)));
+  } catch(e) {}
+  updateNotificationBadge();
+}
+
+function updateNotificationBadge() {
+  const badge = document.getElementById('notificationUnreadBadge');
+  if (!badge) return;
+
+  const unreadCount = activeNotifications.filter(n => !n.read).length;
+  if (unreadCount > 0) {
+    badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+
+function addNotification(notif) {
+  const newNotif = {
+    id: `notif_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+    type: notif.type || 'system', // 'mention', 'checklist', 'system'
+    title: notif.title || 'Workspace Update',
+    message: notif.message || 'New activity recorded',
+    author: notif.author || (currentUser ? currentUser.full_name : 'System User'),
+    role: notif.role || currentRole || 'Admin',
+    itemId: notif.itemId || null,
+    timestamp: new Date().toISOString(),
+    read: false
+  };
+
+  activeNotifications.unshift(newNotif);
+  saveNotifications();
+  renderNotificationFeed(currentNotificationFilter);
+}
+
+function toggleNotificationDropdown(e) {
+  if (e) e.stopPropagation();
+  const dropdown = document.getElementById('notificationDropdownMenu');
+  if (!dropdown) return;
+
+  const isHidden = dropdown.classList.contains('hidden');
+  closeAllHeaderDropdowns();
+
+  if (isHidden) {
+    dropdown.classList.remove('hidden');
+    renderNotificationFeed(currentNotificationFilter);
+  }
+}
+
+function closeNotificationDropdown() {
+  const dropdown = document.getElementById('notificationDropdownMenu');
+  if (dropdown) dropdown.classList.add('hidden');
+}
+
+function closeAllHeaderDropdowns() {
+  const notifMenu = document.getElementById('notificationDropdownMenu');
+  const exportMenu = document.getElementById('exportDropdownMenu');
+  const userMenu = document.getElementById('userDropdownMenu');
+  if (notifMenu) notifMenu.classList.add('hidden');
+  if (exportMenu) exportMenu.classList.add('hidden');
+  if (userMenu) userMenu.classList.add('hidden');
+}
+
+function filterNotificationFeed(filter) {
+  currentNotificationFilter = filter;
+  const filterBtns = {
+    all: document.getElementById('notifFilterAllBtn'),
+    mention: document.getElementById('notifFilterMentionBtn'),
+    checklist: document.getElementById('notifFilterChecklistBtn'),
+    system: document.getElementById('notifFilterSystemBtn')
+  };
+
+  Object.keys(filterBtns).forEach(k => {
+    const btn = filterBtns[k];
+    if (!btn) return;
+    if (k === filter) {
+      btn.className = "px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-2xs transition-all";
+    } else {
+      btn.className = "px-2.5 py-1 rounded-lg text-[11px] font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#27272a] transition-all";
+    }
+  });
+
+  renderNotificationFeed(filter);
+}
+
+function renderNotificationFeed(filter = 'all') {
+  const container = document.getElementById('notificationFeedList');
+  if (!container) return;
+
+  let items = activeNotifications;
+  if (filter !== 'all') {
+    items = items.filter(n => n.type === filter);
+  }
+
+  if (items.length === 0) {
+    container.innerHTML = `
+      <div class="py-8 text-center text-slate-400 space-y-2">
+        <i data-lucide="bell-off" class="w-8 h-8 mx-auto text-slate-300 dark:text-slate-600"></i>
+        <p class="text-xs font-medium">No ${filter === 'all' ? '' : filter} notifications found.</p>
+      </div>
+    `;
+    if (window.lucide) lucide.createIcons();
+    return;
+  }
+
+  let html = '';
+  items.forEach(n => {
+    const icon = n.type === 'mention' ? 'at-sign' :
+                 n.type === 'checklist' ? 'check-circle-2' :
+                 'zap';
+    const iconColor = n.type === 'mention' ? 'text-blue-500 bg-blue-500/10' :
+                      n.type === 'checklist' ? 'text-emerald-500 bg-emerald-500/10' :
+                      'text-amber-500 bg-amber-500/10';
+
+    const timeStr = formatRelativeTime(n.timestamp);
+
+    html += `
+      <div onclick="handleNotificationClick('${n.id}', '${n.itemId || ''}')" class="p-2.5 rounded-xl border ${n.read ? 'border-transparent bg-transparent hover:bg-slate-50 dark:hover:bg-[#202024]' : 'border-slate-200 dark:border-[#2c2c32] bg-slate-50/90 dark:bg-[#202024]/90'} transition-all cursor-pointer flex items-start gap-2.5 group">
+        <div class="w-7 h-7 rounded-lg ${iconColor} flex items-center justify-center flex-shrink-0 mt-0.5">
+          <i data-lucide="${icon}" class="w-3.5 h-3.5"></i>
+        </div>
+        <div class="min-w-0 flex-1 space-y-0.5">
+          <div class="flex items-center justify-between gap-1">
+            <span class="font-bold text-slate-900 dark:text-white truncate">${n.title}</span>
+            <span class="text-[10px] text-slate-400 flex-shrink-0">${timeStr}</span>
+          </div>
+          <p class="text-slate-600 dark:text-slate-300 leading-snug break-words">${n.message}</p>
+          <div class="flex items-center gap-1.5 text-[10px] text-slate-400 pt-0.5">
+            <span class="font-medium text-slate-700 dark:text-slate-300">${n.author}</span>
+            <span>•</span>
+            <span>${n.role}</span>
+          </div>
+        </div>
+        ${!n.read ? `<span class="w-2 h-2 rounded-full bg-blue-600 flex-shrink-0 mt-1.5"></span>` : ''}
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+  if (window.lucide) lucide.createIcons();
+}
+
+function formatRelativeTime(iso) {
+  if (!iso) return 'Just now';
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / (1000 * 60));
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
+}
+
+function handleNotificationClick(notifId, itemId) {
+  const notif = activeNotifications.find(n => n.id === notifId);
+  if (notif) {
+    notif.read = true;
+    saveNotifications();
+  }
+
+  if (itemId) {
+    closeNotificationDropdown();
+    openFeatureDetailDrawer(itemId);
+  } else {
+    renderNotificationFeed(currentNotificationFilter);
+  }
+}
+
+function markAllNotificationsAsRead() {
+  activeNotifications.forEach(n => { n.read = true; });
+  saveNotifications();
+  renderNotificationFeed(currentNotificationFilter);
+  showLiveBroadcast("All notifications marked as read.");
+}
+
+function clearAllNotifications() {
+  activeNotifications = [];
+  saveNotifications();
+  renderNotificationFeed(currentNotificationFilter);
+  showLiveBroadcast("Notification feed cleared.");
+}
+
+// Window bindings
+window.toggleNotificationDropdown = toggleNotificationDropdown;
+window.closeNotificationDropdown = closeNotificationDropdown;
+window.filterNotificationFeed = filterNotificationFeed;
+window.handleNotificationClick = handleNotificationClick;
+window.markAllNotificationsAsRead = markAllNotificationsAsRead;
+window.clearAllNotifications = clearAllNotifications;
+window.addNotification = addNotification;
