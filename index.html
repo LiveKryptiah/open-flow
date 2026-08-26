@@ -40,7 +40,7 @@
   <!-- ==========================================
        1. STANDALONE EXTERNAL AUTHENTICATION GATEWAY
        ========================================== -->
-  <div id="authGatewayView" style="display: none !important;" class="hidden">
+  <div id="authGatewayView" class="relative min-h-screen w-screen flex flex-col bg-slate-50 dark:bg-[#0f0f12] text-slate-900 dark:text-slate-100 transition-colors">
     
     <!-- Ambient Background Lighting -->
     <div class="absolute -top-40 -left-40 w-96 h-96 bg-blue-500/10 dark:bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -235,7 +235,7 @@
     <!-- ==========================================
        2. MAIN WORK OS APPLICATION CONTAINER (SIDEBAR LAYOUT)
        ========================================== -->
-  <div id="mainAppView" style="display: flex !important;" class="flex h-screen w-screen overflow-hidden bg-slate-50 dark:bg-[#121214] text-slate-900 dark:text-slate-100">
+  <div id="mainAppView" class="hidden h-screen w-screen overflow-hidden bg-slate-50 dark:bg-[#121214] text-slate-900 dark:text-slate-100">
     
     <!-- LEFT SIDEBAR -->
     <aside id="appSidebar" class="w-64 flex-shrink-0 bg-white dark:bg-[#18181b] border-r border-slate-200 dark:border-[#27272a] flex flex-col h-full transition-all duration-300 z-30 select-none">

@@ -120,6 +120,7 @@ function applyTheme(theme) {
 function setAppAuthScreen(isAuthenticated) {
   const authGateway = document.getElementById('authGatewayView');
   const mainApp = document.getElementById('mainAppView');
+  
   if (isAuthenticated) {
     if (authGateway) {
       authGateway.classList.add('hidden');
@@ -139,33 +140,172 @@ function setAppAuthScreen(isAuthenticated) {
       mainApp.style.display = 'none';
     }
   }
-}
 
-
-async function checkAuthAndInitialize() {
-  // Auto-authenticated as Lead Architect & Founder
-  currentUser = {
-    id: "usr_1787711972971",
-    email: "azarelclightn@gmail.com",
-    full_name: "Azarel Clight Nadal",
-    role: "admin",
-    organization: "Kryptiah"
-  };
-  currentRole = 'admin';
-  authToken = 'token_direct_access';
-
-  setAppAuthScreen(true);
-  updateUserUI();
-  await fetchBoardDataFromDB();
   if (window.lucide) lucide.createIcons();
 }
 
-function getAuthHeaders() {
-  const headers = { 'Content-Type': 'application/json' };
-  if (authToken) {
-    headers['Authorization'] = `Bearer ${authToken}`;
+async function checkAuthAndInitialize() {
+  const savedToken = localStorage.getItem('openflow_session_token');
+  const savedUser = localStorage.getItem('openflow_user');
+
+  if (savedToken && savedUser) {
+    try {
+      authToken = savedToken;
+      currentUser = JSON.parse(savedUser);
+      currentRole = currentUser.role || 'admin';
+      
+      setAppAuthScreen(true);
+      updateUserUI();
+      await fetchBoardDataFromDB();
+      return;
+    } catch (e) {
+      console.warn("Session restore failed:", e);
+    }
   }
-  return headers;
+
+  // Not authenticated -> Show the Security Authentication Webpage
+  setAppAuthScreen(false);
+}
+
+async function executeGatewayLogin(explicitEmail, explicitPassword) {
+  const emailInp = document.getElementById('gateLoginEmail');
+  const passInp = document.getElementById('gateLoginPassword');
+  const submitBtn = document.getElementById('gateLoginSubmitBtn');
+
+  const email = explicitEmail || (emailInp ? emailInp.value.trim() : '');
+  const password = explicitPassword || (passInp ? passInp.value : '');
+
+  if (!email || !password) {
+    showGatewayAlert('Please provide both email and password.', 'error');
+    return;
+  }
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Authenticating...`;
+    if (window.lucide) lucide.createIcons();
+  }
+
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password })
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      authToken = data.token;
+      currentUser = data.user;
+      currentRole = data.user.role || 'admin';
+
+      localStorage.setItem('openflow_session_token', authToken);
+      localStorage.setItem('openflow_user', JSON.stringify(currentUser));
+
+      setAppAuthScreen(true);
+      updateUserUI();
+      await fetchBoardDataFromDB();
+      showLiveBroadcast(`Welcome back, ${currentUser.full_name}! Security session verified.`);
+    } else {
+      showGatewayAlert(data.error || 'Invalid email or security password.', 'error');
+    }
+  } catch (err) {
+    console.error("Login request error:", err);
+    showGatewayAlert('Connection error while contacting authentication server.', 'error');
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `<i data-lucide="log-in" class="w-4 h-4"></i> Sign In to Work OS`;
+      if (window.lucide) lucide.createIcons();
+    }
+  }
+}
+
+async function executeGatewayRegister() {
+  const fullName = document.getElementById('gateRegFullName').value.trim();
+  const email = document.getElementById('gateRegEmail').value.trim();
+  const password = document.getElementById('gateRegPassword').value;
+  const confirmPassword = document.getElementById('gateRegConfirmPassword').value;
+  const organization = document.getElementById('gateRegOrg').value.trim() || 'Kryptiah';
+  const role = document.getElementById('gateRegRole').value || 'dept_head';
+  const submitBtn = document.getElementById('gateRegisterSubmitBtn');
+
+  if (!fullName || !email || !password) {
+    showGatewayAlert('Please complete all required fields.', 'error');
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    showGatewayAlert('Passwords do not match. Please verify.', 'error');
+    return;
+  }
+
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Creating Account...`;
+    if (window.lucide) lucide.createIcons();
+  }
+
+  try {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        full_name: fullName,
+        email: email,
+        password: password,
+        organization: organization,
+        role: role
+      })
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      authToken = data.token;
+      currentUser = data.user;
+      currentRole = data.user.role || role;
+
+      localStorage.setItem('openflow_session_token', authToken);
+      localStorage.setItem('openflow_user', JSON.stringify(currentUser));
+
+      setAppAuthScreen(true);
+      updateUserUI();
+      await fetchBoardDataFromDB();
+      showLiveBroadcast(`Account created successfully! Welcome, ${fullName}.`);
+    } else {
+      showGatewayAlert(data.error || 'Registration failed.', 'error');
+    }
+  } catch (err) {
+    console.error("Registration request error:", err);
+    showGatewayAlert('Connection error while contacting server.', 'error');
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = `<i data-lucide="user-check" class="w-4 h-4"></i> Create Work OS Account`;
+      if (window.lucide) lucide.createIcons();
+    }
+  }
+}
+
+async function handleSignOut() {
+  try {
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+      headers: getAuthHeaders()
+    });
+  } catch (err) {
+    console.warn("Logout endpoint error:", err);
+  }
+
+  authToken = null;
+  currentUser = null;
+  localStorage.removeItem('openflow_session_token');
+  localStorage.removeItem('openflow_user');
+
+  setAppAuthScreen(false);
+  showLiveBroadcast('Security session ended. Signed out.');
 }
 
 function updateUserUI() {
