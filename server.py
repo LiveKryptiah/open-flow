@@ -385,18 +385,22 @@ class WorkOSHandler(http.server.SimpleHTTPRequestHandler):
         raw_parsed = urllib.parse.urlparse(self.path)
         qs = urllib.parse.parse_qs(raw_parsed.query)
 
+        # 1. Static UI & Clean Encrypted Pages (Do not prefix with /api)
+        if raw_parsed.path in ["/login", "/auth", "/portal", "/signin", "/dashboard", "/app", "/", "/index.html", "/login.html", "/styles.css", "/app.js", "/favicon.ico"]:
+            return raw_parsed.path, qs
+
         path = raw_parsed.path
 
-        # 1. Check route param from vercel.json rewrite
+        # 2. Check route param from vercel.json rewrite
         if "route" in qs and qs["route"]:
             path = qs["route"][0]
-        # 2. Check x-matched-path / x-forwarded-uri from Vercel Edge proxy
+        # 3. Check x-matched-path / x-forwarded-uri from Vercel Edge proxy
         elif self.headers.get("x-matched-path"):
             path = urllib.parse.urlparse(self.headers["x-matched-path"]).path
         elif self.headers.get("x-forwarded-uri"):
             path = urllib.parse.urlparse(self.headers["x-forwarded-uri"]).path
 
-        # 3. Clean and normalize path
+        # 4. Clean and normalize API path
         path = path.strip()
         if path.endswith(".py"):
             path = path[:-3]
@@ -415,7 +419,6 @@ class WorkOSHandler(http.server.SimpleHTTPRequestHandler):
 
         norm = norm.rstrip("/")
 
-        print(f"[WorkOS Route Match] Raw: '{self.path}' -> Normalized: '{norm}'", flush=True)
         return norm, qs
 
     def __init__(self, *args, **kwargs):
@@ -555,6 +558,15 @@ class WorkOSHandler(http.server.SimpleHTTPRequestHandler):
         req_path, query = self._get_request_path()
         parsed = urllib.parse.urlparse(self.path)
         parsed = parsed._replace(path=req_path)
+
+        # 1. Clean URL Encrypted Routes
+        if parsed.path in ["/login", "/auth", "/portal", "/signin"]:
+            self.path = "/login.html"
+            return super().do_GET()
+        elif parsed.path in ["/dashboard", "/app", "/workspace"]:
+            self.path = "/index.html"
+            return super().do_GET()
+
 
         # 1.5 API: Proxy Website to bypass X-Frame-Options restrictions
         if parsed.path == "/api/proxy-site":

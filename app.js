@@ -131,7 +131,7 @@ window.getAuthHeaders = getAuthHeaders;
 async function checkAuthAndInitialize() {
   const isExplicitlyLoggedOut = localStorage.getItem('openflow_logged_out') === 'true';
   if (isExplicitlyLoggedOut) {
-    window.location.replace('/login.html');
+    window.location.replace('/login');
     return;
   }
 
@@ -180,7 +180,7 @@ async function handleLogout() {
   localStorage.removeItem('openflow_user');
   localStorage.setItem('openflow_logged_out', 'true');
 
-  window.location.replace('/login.html');
+  window.location.replace('/login');
 }
 
 window.handleLogout = handleLogout;

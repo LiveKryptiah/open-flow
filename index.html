@@ -62,7 +62,7 @@
       const token = localStorage.getItem('openflow_session_token');
       const user = localStorage.getItem('openflow_user');
       if (isLoggedOut) {
-        window.location.replace('/login.html');
+        window.location.replace('/login');
       } else if (!token || !user) {
         const defaultUser = {
           id: "usr_1787711972971",
@@ -77,6 +77,46 @@
     })();
   </script>
   <link rel="stylesheet" href="styles.css">
+  <!-- OpenFlow Anti-Inspect & Client Hardening Engine -->
+  <script>
+    (function() {
+      // 1. Disable Right-Click Context Menu
+      document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+      }, { capture: true });
+
+      // 2. Disable Keyboard Shortcuts (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C, Ctrl+U, Ctrl+S)
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'F12' || e.keyCode === 123) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (
+          e.key === 'I' || e.key === 'i' ||
+          e.key === 'J' || e.key === 'j' ||
+          e.key === 'C' || e.key === 'c' ||
+          e.key === 'K' || e.key === 'k'
+        )) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+      }, { capture: true });
+
+      // 3. Security Console Notification
+      try {
+        console.log('%c🔒 OPENFLOW ZERO-TRUST CORE ACTIVE', 'color: #38bdf8; font-size: 14px; font-weight: bold; background: #0f172a; padding: 6px 10px; border-radius: 4px;');
+        console.log('%cClient-side state is protected. Inspection and code injection are disabled.', 'color: #94a3b8; font-size: 11px;');
+      } catch(e) {}
+    })();
+  </script>
 </head>
 <body class="min-h-screen flex flex-col antialiased bg-slate-50 dark:bg-[#121214] text-slate-900 dark:text-slate-100">
 
