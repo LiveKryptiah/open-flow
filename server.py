@@ -178,10 +178,13 @@ def ensure_db_ready():
                     print("[Vercel DB Copy Error]:", e)
             init_db()
 
+TURSO_DEFAULT_URL = "https://openflow-db-vercel-icfg-aozttlc9cpfvzxmsudaiqytn.aws-us-east-1.turso.io"
+TURSO_DEFAULT_TOKEN = "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODc3MjgyMzYsImlkIjoiMDFhMDNjZTgtMGQwMS03ZDgyLWEyZWItZDU2MWRjOGI3NTA4Iiwia2lkIjoiVkQ1Nm9BbnB3blE1QjJubWgyWmpwanZGRk9Yd3NqVnloZk1nRzBqZzR0dyIsInJpZCI6ImI1ZDRiOWNlLTY1NTMtNGJjMS05NGVkLTM5NmU0NGZjM2EwYiJ9.UR9OOyZIiJzZ8ZPnyYbbxuZybAXMw2wPoiKnN4ComuZxrgSgNy5cM_GONge0fOhPWEjkAtXsxoXJ_MExOmwCCw"
+
 def get_db():
-    # 1. Check for Turso Database URL and Auth Token in Environment Variables
-    turso_url = os.environ.get("TURSO_DATABASE_URL") or os.environ.get("TURSO_URL") or os.environ.get("LIBSQL_URL") or os.environ.get("DATABASE_URL", "")
-    turso_token = os.environ.get("TURSO_AUTH_TOKEN") or os.environ.get("TURSO_TOKEN") or os.environ.get("LIBSQL_AUTH_TOKEN", "")
+    # 1. Check for Turso Database URL and Auth Token (from Env or Default)
+    turso_url = os.environ.get("TURSO_DATABASE_URL") or os.environ.get("TURSO_URL") or os.environ.get("LIBSQL_URL") or os.environ.get("DATABASE_URL") or TURSO_DEFAULT_URL
+    turso_token = os.environ.get("TURSO_AUTH_TOKEN") or os.environ.get("TURSO_TOKEN") or os.environ.get("LIBSQL_AUTH_TOKEN") or TURSO_DEFAULT_TOKEN
 
     if turso_url and (turso_url.startswith("libsql://") or turso_url.startswith("http://") or turso_url.startswith("https://") or "turso.io" in turso_url):
         client = TursoClient(turso_url, turso_token)
