@@ -969,7 +969,8 @@ class WorkOSHandler(http.server.SimpleHTTPRequestHandler):
         super().do_GET()
 
     def do_POST(self):
-        parsed = urllib.parse.urlparse(self.path)
+        req_path, query = self._get_request_path()
+        parsed = urllib.parse.urlparse(self.path)._replace(path=req_path)
         content_len = int(self.headers.get("Content-Length", 0))
         body = json.loads(self.rfile.read(content_len).decode("utf-8")) if content_len > 0 else {}
 
@@ -1584,7 +1585,8 @@ class WorkOSHandler(http.server.SimpleHTTPRequestHandler):
         self._send_json_response({"error": "Endpoint not found"}, 404)
 
     def do_PUT(self):
-        parsed = urllib.parse.urlparse(self.path)
+        req_path, query = self._get_request_path()
+        parsed = urllib.parse.urlparse(self.path)._replace(path=req_path)
         content_len = int(self.headers.get("Content-Length", 0))
         body = json.loads(self.rfile.read(content_len).decode("utf-8")) if content_len > 0 else {}
 
