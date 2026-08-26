@@ -6611,22 +6611,45 @@ function addNotification(notif) {
 }
 
 function toggleNotificationDropdown(e) {
-  if (e) e.stopPropagation();
-  const dropdown = document.getElementById('notificationDropdownMenu');
-  if (!dropdown) return;
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  const modal = document.getElementById('notificationDropdownMenu');
+  const panel = document.getElementById('notificationPanel');
+  const backdrop = document.getElementById('notificationBackdrop');
+  if (!modal) return;
 
-  const isHidden = dropdown.classList.contains('hidden');
-  closeAllHeaderDropdowns();
+  const isHidden = modal.classList.contains('hidden');
 
   if (isHidden) {
-    dropdown.classList.remove('hidden');
+    modal.classList.remove('hidden');
     renderNotificationFeed(currentNotificationFilter);
+    setTimeout(() => {
+      if (backdrop) backdrop.classList.remove('opacity-0');
+      if (panel) {
+        panel.classList.remove('opacity-0', 'translate-y-2', 'scale-95');
+        panel.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+      }
+    }, 10);
+  } else {
+    closeNotificationDropdown();
   }
+  if (window.lucide) lucide.createIcons();
 }
 
 function closeNotificationDropdown() {
-  const dropdown = document.getElementById('notificationDropdownMenu');
-  if (dropdown) dropdown.classList.add('hidden');
+  const modal = document.getElementById('notificationDropdownMenu');
+  const panel = document.getElementById('notificationPanel');
+  const backdrop = document.getElementById('notificationBackdrop');
+  if (backdrop) backdrop.classList.add('opacity-0');
+  if (panel) {
+    panel.classList.remove('opacity-100', 'translate-y-0', 'scale-100');
+    panel.classList.add('opacity-0', 'translate-y-2', 'scale-95');
+  }
+  setTimeout(() => {
+    if (modal) modal.classList.add('hidden');
+  }, 200);
 }
 
 function closeAllHeaderDropdowns() {
