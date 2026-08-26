@@ -167,6 +167,18 @@ async function checkAuthAndInitialize() {
   setAppAuthScreen(false);
 }
 
+function getAuthHeaders() {
+  const headers = { 'Content-Type': 'application/json' };
+  const token = authToken || localStorage.getItem('openflow_session_token');
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
+window.getAuthHeaders = getAuthHeaders;
+
+
 async function executeGatewayLogin(explicitEmail, explicitPassword) {
   const emailInp = document.getElementById('gateLoginEmail');
   const passInp = document.getElementById('gateLoginPassword');
