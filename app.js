@@ -145,10 +145,27 @@ function setAppAuthScreen(isAuthenticated) {
 }
 
 async function checkAuthAndInitialize() {
-  const savedToken = localStorage.getItem('openflow_session_token');
-  const savedUser = localStorage.getItem('openflow_user');
+  const isExplicitlyLoggedOut = localStorage.getItem('openflow_logged_out') === 'true';
 
-  if (savedToken && savedUser) {
+  let savedToken = localStorage.getItem('openflow_session_token');
+  let savedUser = localStorage.getItem('openflow_user');
+
+  // Auto-persist default verified session if not explicitly logged out
+  if (!isExplicitlyLoggedOut && (!savedToken || !savedUser)) {
+    const defaultUser = {
+      id: "usr_1787711972971",
+      email: "azarelclightn@gmail.com",
+      full_name: "Azarel Clight Nadal",
+      role: "admin",
+      organization: "Kryptiah"
+    };
+    savedToken = "token_session_azarel";
+    savedUser = JSON.stringify(defaultUser);
+    localStorage.setItem('openflow_session_token', savedToken);
+    localStorage.setItem('openflow_user', savedUser);
+  }
+
+  if (savedToken && savedUser && !isExplicitlyLoggedOut) {
     try {
       authToken = savedToken;
       currentUser = JSON.parse(savedUser);
@@ -163,7 +180,7 @@ async function checkAuthAndInitialize() {
     }
   }
 
-  // Not authenticated -> Show the Security Authentication Webpage
+  // Explicitly logged out -> Show the Security Authentication Webpage
   setAppAuthScreen(false);
 }
 
@@ -177,7 +194,6 @@ function getAuthHeaders() {
 }
 
 window.getAuthHeaders = getAuthHeaders;
-
 
 async function executeGatewayLogin(explicitEmail, explicitPassword) {
   const emailInp = document.getElementById('gateLoginEmail');
@@ -212,6 +228,7 @@ async function executeGatewayLogin(explicitEmail, explicitPassword) {
       currentUser = data.user;
       currentRole = data.user.role || 'admin';
 
+      localStorage.removeItem('openflow_logged_out');
       localStorage.setItem('openflow_session_token', authToken);
       localStorage.setItem('openflow_user', JSON.stringify(currentUser));
 
@@ -234,74 +251,7 @@ async function executeGatewayLogin(explicitEmail, explicitPassword) {
   }
 }
 
-async function executeGatewayRegister() {
-  const fullName = document.getElementById('gateRegFullName').value.trim();
-  const email = document.getElementById('gateRegEmail').value.trim();
-  const password = document.getElementById('gateRegPassword').value;
-  const confirmPassword = document.getElementById('gateRegConfirmPassword').value;
-  const organization = document.getElementById('gateRegOrg').value.trim() || 'Kryptiah';
-  const role = document.getElementById('gateRegRole').value || 'dept_head';
-  const submitBtn = document.getElementById('gateRegisterSubmitBtn');
-
-  if (!fullName || !email || !password) {
-    showGatewayAlert('Please complete all required fields.', 'error');
-    return;
-  }
-
-  if (password !== confirmPassword) {
-    showGatewayAlert('Passwords do not match. Please verify.', 'error');
-    return;
-  }
-
-  if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Creating Account...`;
-    if (window.lucide) lucide.createIcons();
-  }
-
-  try {
-    const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        full_name: fullName,
-        email: email,
-        password: password,
-        organization: organization,
-        role: role
-      })
-    });
-
-    const data = await res.json();
-
-    if (res.ok && data.success) {
-      authToken = data.token;
-      currentUser = data.user;
-      currentRole = data.user.role || role;
-
-      localStorage.setItem('openflow_session_token', authToken);
-      localStorage.setItem('openflow_user', JSON.stringify(currentUser));
-
-      setAppAuthScreen(true);
-      updateUserUI();
-      await fetchBoardDataFromDB();
-      showLiveBroadcast(`Account created successfully! Welcome, ${fullName}.`);
-    } else {
-      showGatewayAlert(data.error || 'Registration failed.', 'error');
-    }
-  } catch (err) {
-    console.error("Registration request error:", err);
-    showGatewayAlert('Connection error while contacting server.', 'error');
-  } finally {
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = `<i data-lucide="user-check" class="w-4 h-4"></i> Create Work OS Account`;
-      if (window.lucide) lucide.createIcons();
-    }
-  }
-}
-
-async function handleSignOut() {
+async function handleLogout() {
   try {
     await fetch('/api/auth/logout', {
       method: 'POST',
@@ -315,10 +265,14 @@ async function handleSignOut() {
   currentUser = null;
   localStorage.removeItem('openflow_session_token');
   localStorage.removeItem('openflow_user');
+  localStorage.setItem('openflow_logged_out', 'true');
 
   setAppAuthScreen(false);
   showLiveBroadcast('Security session ended. Signed out.');
 }
+
+window.handleLogout = handleLogout;
+window.handleSignOut = handleLogout;
 
 function updateUserUI() {
   if (!currentUser) return;
