@@ -1709,7 +1709,7 @@ async function renderFinanceView() {
                   <tr class="hover:bg-slate-50/50 dark:hover:bg-[#202024]/50 transition-colors">
                     <td class="p-3.5 pl-4">
                       <div class="flex items-center gap-2.5">
-                        <div class="w-7 h-7 rounded-full bg-slate-900 dark:bg-[#27272a] text-white dark:text-white font-bold text-[11px] flex items-center justify-center font-mono">
+                        <div class="w-7 h-7 rounded-full bg-slate-100 dark:bg-[#27272a] text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-[#38383e] font-medium text-xs flex items-center justify-center font-mono">
                           ${s.member_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                         </div>
                         <div>
@@ -2220,7 +2220,7 @@ function renderTableView() {
     // Render Rows
     filteredItems.forEach((item, index) => {
       html += `<tr class="hover:bg-slate-50/80 transition-colors group" data-row-id="${item.id}">`;
-      html += `<td class="p-3 text-center font-mono text-slate-400 select-none">${index + 1}</td>`;
+      html += `<td class="p-3 text-center font-mono text-[11px] font-medium text-slate-400 select-none">${index + 1}</td>`;
 
       activeColumnsConfig.forEach(col => {
         const val = item.data[col.id];
@@ -2298,7 +2298,7 @@ function renderTableView() {
           const initial = val ? val.trim().charAt(0).toUpperCase() : 'U';
           html += `
             <div class="flex items-center gap-1.5 min-w-[200px]">
-              <div class="w-6 h-6 rounded-full bg-black dark:bg-black text-white border border-slate-700 flex items-center justify-center font-bold text-[10px] flex-shrink-0 shadow-2xs">
+              <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-[#27272a] text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-[#38383e] flex items-center justify-center font-medium text-[11px] font-mono flex-shrink-0 shadow-2xs">
                 ${initial}
               </div>
               ${canEdit ? `
@@ -5449,7 +5449,7 @@ function renderDrawerComments(item) {
       <div class="p-3.5 bg-slate-50 dark:bg-[#202024] rounded-xl border border-slate-200/80 dark:border-[#2c2c32] space-y-2 text-xs group">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <div class="w-6 h-6 rounded-full bg-slate-900 dark:bg-[#27272a] text-white flex items-center justify-center font-bold text-[10px] font-mono">
+            <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-[#27272a] text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-[#38383e] flex items-center justify-center font-medium text-[11px] font-mono">
               ${initial}
             </div>
             <div class="flex items-center gap-1.5">

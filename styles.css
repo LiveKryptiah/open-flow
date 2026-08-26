@@ -1,4 +1,18 @@
 
+/* Crisp, Readable Iconography & Digit Typography */
+svg.lucide,
+[data-lucide] {
+  stroke-width: 1.75 !important;
+}
+
+/* Clear, balanced digit & avatar badges */
+.digit-badge,
+.avatar-badge {
+  font-family: 'Geist Mono', 'Geist', monospace !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
+}
+
 /* ==========================================================================
    AUTH & LOGIN INPUT FIELD GEOMETRY (PREVENTS ICON OVERLAPPING)
    ========================================================================== */
