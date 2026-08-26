@@ -4109,87 +4109,179 @@ window.openProjectWebsiteModalDirect = openProjectWebsiteModalDirect;
 window.setWebsiteViewport = setWebsiteViewport;
 
 // =========================================================================
-// 15. PROJECT WORKSPACES MANAGER & DELETE ENGINE
+// 15. PROJECT WORKSPACES MANAGER & SCHEMA CREATION ENGINE
 // =========================================================================
+
+async function refreshProjectWorkspacesFromDB() {
+  try {
+    const res = await fetch('/api/tenants', { headers: getAuthHeaders() });
+    if (res.ok) {
+      const json = await res.json();
+      allTenantsList = json.tenants || [];
+      populateWorkspaceDropdown();
+    }
+  } catch (err) {
+    console.error("Failed to refresh tenants:", err);
+  }
+}
+
+async function openProjectManagerModal() {
+  await refreshProjectWorkspacesFromDB();
+  renderProjectManagerModal();
+}
+
+function closeProjectManagerModal() {
+  const modal = document.getElementById('projectManagerModal');
+  if (modal) modal.classList.add('hidden');
+}
 
 function renderProjectManagerModal() {
   const modal = document.getElementById('projectManagerModal');
-  const listCont = document.getElementById('projectManagerList');
-  if (!modal || !listCont) return;
+  const listCont = document.getElementById('projectWorkspacesList') || document.getElementById('projectManagerList');
+  if (!modal) return;
 
-  if (allTenantsList.length === 0) {
-    listCont.innerHTML = `
-      <div class="p-6 text-center text-slate-400 text-xs border border-dashed border-slate-200 dark:border-zinc-800 rounded-xl">
-        No project workspaces found.
-      </div>
-    `;
-  } else {
-    let html = '';
-    allTenantsList.forEach(t => {
-      const isActive = t.tenant_id === currentTenantKey;
-      const activeBadge = isActive ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 dark:bg-[#27272a] text-white dark:text-white">Active</span>' : '';
-      const webUrl = t.website_url || `https://${(t.schema_name || 'openflow').replace(/_/g, '-')}.gov.ph`;
-
-      html += `
-        <div class="p-3.5 rounded-xl border ${isActive ? 'border-slate-400 dark:border-zinc-500 bg-slate-50 dark:bg-[#18181b]' : 'border-slate-200 dark:border-[#27272a] bg-white dark:bg-[#161619]'} flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs hover:border-slate-400 dark:hover:border-zinc-600 transition-all">
-          <div class="space-y-1 flex-1 min-w-0">
-            <div class="flex items-center gap-2 flex-wrap">
-              <h4 class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">${t.title}</h4>
-              ${activeBadge}
-              <span class="text-[10px] font-mono text-slate-500 dark:text-zinc-400 bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-zinc-700">${t.schema_name}</span>
-            </div>
-            ${t.description ? `<p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${t.description}</p>` : ''}
-            <div class="text-[10px] text-slate-400 font-mono flex items-center gap-1">
-              <i data-lucide="globe" class="w-3 h-3 text-slate-400"></i>
-              <span class="truncate">${webUrl}</span>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-1.5 self-end sm:self-auto flex-shrink-0">
-            ${!isActive ? `
-              <button class="switch-to-project-btn px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-semibold transition-colors" data-tenant-id="${t.tenant_id}">
-                Switch To
-              </button>
-            ` : `
-              <span class="px-2.5 py-1 text-[11px] font-semibold text-slate-400 italic">Current Workspace</span>
-            `}
-
-            <button class="delete-project-row-btn p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-zinc-700 dark:hover:bg-slate-200 dark:hover:bg-zinc-700 rounded-lg transition-colors" data-tenant-id="${t.tenant_id}" data-project-title="${t.title}" title="Delete Project Workspace">
-              <i data-lucide="trash-2" class="w-4 h-4"></i>
-            </button>
-          </div>
+  if (listCont) {
+    if (!allTenantsList || allTenantsList.length === 0) {
+      listCont.innerHTML = `
+        <div class="p-6 text-center text-slate-400 text-xs border border-dashed border-slate-200 dark:border-zinc-800 rounded-xl">
+          No project workspaces found. Click 'Create New Project' below to start one.
         </div>
       `;
-    });
-    listCont.innerHTML = html;
+    } else {
+      let html = '';
+      allTenantsList.forEach(t => {
+        const isActive = t.tenant_id === currentTenantKey;
+        const activeBadge = isActive ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 dark:bg-[#27272a] text-white dark:text-white">Active</span>' : '';
+        const webUrl = t.website_url || `https://${(t.schema_name || 'openflow').replace(/_/g, '-')}.gov.ph`;
+
+        html += `
+          <div class="p-3.5 rounded-xl border ${isActive ? 'border-slate-400 dark:border-zinc-500 bg-slate-50 dark:bg-[#18181b]' : 'border-slate-200 dark:border-[#27272a] bg-white dark:bg-[#161619]'} flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs hover:border-slate-400 dark:hover:border-zinc-600 transition-all">
+            <div class="space-y-1 flex-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <h4 class="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">${t.title}</h4>
+                ${activeBadge}
+                <span class="text-[10px] font-mono text-slate-500 dark:text-zinc-400 bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-zinc-700">${t.schema_name}</span>
+              </div>
+              ${t.description ? `<p class="text-[11px] text-slate-500 dark:text-slate-400 truncate">${t.description}</p>` : ''}
+              <div class="text-[10px] text-slate-400 font-mono flex items-center gap-1">
+                <i data-lucide="globe" class="w-3 h-3 text-slate-400"></i>
+                <span class="truncate">${webUrl}</span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-1.5 self-end sm:self-auto flex-shrink-0">
+              ${!isActive ? `
+                <button type="button" class="switch-to-project-btn px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-semibold transition-colors" data-tenant-id="${t.tenant_id}">
+                  Switch To
+                </button>
+              ` : `
+                <span class="px-2.5 py-1 text-[11px] font-semibold text-slate-400 italic">Current Workspace</span>
+              `}
+
+              <button type="button" class="delete-project-row-btn p-1.5 text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-zinc-700 rounded-lg transition-colors" data-tenant-id="${t.tenant_id}" data-project-title="${t.title}" title="Delete Project Workspace">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      listCont.innerHTML = html;
+
+      // Attach switch listeners
+      listCont.querySelectorAll('.switch-to-project-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tid = btn.getAttribute('data-tenant-id');
+          currentTenantKey = tid;
+          modal.classList.add('hidden');
+          fetchBoardDataFromDB();
+          showLiveBroadcast(`Switched to project workspace.`);
+        });
+      });
+
+      // Attach delete listeners
+      listCont.querySelectorAll('.delete-project-row-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const tid = btn.getAttribute('data-tenant-id');
+          const title = btn.getAttribute('data-project-title');
+          await deleteProjectById(tid, title);
+        });
+      });
+    }
   }
 
   modal.classList.remove('hidden');
-  lucide.createIcons();
+  if (window.lucide) lucide.createIcons();
+}
 
-  // Attach switch listeners
-  listCont.querySelectorAll('.switch-to-project-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tid = btn.getAttribute('data-tenant-id');
-      currentTenantKey = tid;
-      modal.classList.add('hidden');
-      fetchBoardDataFromDB();
-      showLiveBroadcast(`Switched to project workspace.`);
-    });
-  });
+function createProjectFromManager() {
+  closeProjectManagerModal();
+  openNewSchemaModal();
+}
 
-  // Attach delete listeners
-  listCont.querySelectorAll('.delete-project-row-btn').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const tid = btn.getAttribute('data-tenant-id');
-      const title = btn.getAttribute('data-project-title');
-      await deleteProjectById(tid, title);
+function openNewSchemaModal() {
+  const modal = document.getElementById('newSchemaModal');
+  const form = document.getElementById('newSchemaForm');
+  if (form) form.reset();
+  if (modal) modal.classList.remove('hidden');
+  if (window.lucide) lucide.createIcons();
+}
+
+function closeNewSchemaModal() {
+  const modal = document.getElementById('newSchemaModal');
+  if (modal) modal.classList.add('hidden');
+}
+
+async function handleCreateNewSchema(e) {
+  if (e && e.preventDefault) e.preventDefault();
+
+  const nameInput = document.getElementById('newSchemaName') || document.getElementById('newSchemaNameInput');
+  const urlInput = document.getElementById('newSchemaUrl') || document.getElementById('newSchemaWebsiteInput');
+  const descInput = document.getElementById('newSchemaDesc') || document.getElementById('newSchemaDescInput');
+
+  const name = nameInput ? nameInput.value.trim() : '';
+  const website = urlInput ? urlInput.value.trim() : '';
+  const desc = descInput ? descInput.value.trim() : 'Custom Project Workspace';
+
+  if (!name) {
+    alert("Please enter a Project Name.");
+    return;
+  }
+
+  const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+
+  try {
+    const res = await fetch('/api/tenants', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        name: name,
+        schema_name: slug,
+        description: desc,
+        website_url: website
+      })
     });
-  });
+    const json = await res.json();
+    if (res.ok && json.success) {
+      currentTenantKey = json.tenant.tenant_id;
+      closeNewSchemaModal();
+      const form = document.getElementById('newSchemaForm');
+      if (form) form.reset();
+      showLiveBroadcast(`Created new project workspace '${name}'.`);
+      await fetchBoardDataFromDB();
+      await refreshProjectWorkspacesFromDB();
+    } else {
+      alert(json.error || "Failed to create project workspace.");
+    }
+  } catch (err) {
+    console.error("Failed to create project:", err);
+    alert("Server connection error while creating project workspace.");
+  }
 }
 
 async function deleteProjectById(tenantId, projectTitle) {
-  if (!confirm(`Are you sure you want to permanently delete project '${projectTitle}'?\n\nThis will remove all features, columns, automations, and audit logs for this project workspace.`)) return;
+  if (!confirm(`Are you sure you want to permanently delete project '${projectTitle}'?
+
+This will remove all features, columns, automations, and audit logs for this project workspace.`)) return;
 
   try {
     const res = await fetch(`/api/tenants?tenant_id=${encodeURIComponent(tenantId)}`, {
@@ -4203,6 +4295,7 @@ async function deleteProjectById(tenantId, projectTitle) {
       }
       showLiveBroadcast(`Project '${projectTitle}' was permanently deleted.`);
       await fetchBoardDataFromDB();
+      await refreshProjectWorkspacesFromDB();
       renderProjectManagerModal();
     } else {
       alert(json.error || "Failed to delete project.");
@@ -4212,6 +4305,14 @@ async function deleteProjectById(tenantId, projectTitle) {
     showLiveBroadcast(`Error deleting project workspace.`);
   }
 }
+
+window.openProjectManagerModal = openProjectManagerModal;
+window.closeProjectManagerModal = closeProjectManagerModal;
+window.createProjectFromManager = createProjectFromManager;
+window.openNewSchemaModal = openNewSchemaModal;
+window.closeNewSchemaModal = closeNewSchemaModal;
+window.handleCreateNewSchema = handleCreateNewSchema;
+window.deleteProjectById = deleteProjectById;
 
 // Global Window Exports for Inline HTML Handlers
 window.switchGatewayTab = switchGatewayTab;
