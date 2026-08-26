@@ -571,6 +571,12 @@ async function executeGatewayRegister() {
 }
 
 function initEventListeners() {
+  const notifBellBtn = document.getElementById('notificationBellBtn');
+  if (notifBellBtn) {
+    notifBellBtn.addEventListener('click', (e) => {
+      toggleNotificationDropdown(e);
+    });
+  }
 
   // 0. Theme initialization complete (handlers bound via inline onclick)
 
@@ -6602,43 +6608,32 @@ function addNotification(notif) {
   renderNotificationFeed(currentNotificationFilter);
 }
 
-function toggleNotificationDropdown(e) {
-  if (e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
+function openNotificationDropdown() {
   const modal = document.getElementById('notificationDropdownMenu');
-  const panel = document.getElementById('notificationPanel');
-  const backdrop = document.getElementById('notificationBackdrop');
   if (!modal) return;
-
-  if (modal.classList.contains('hidden')) {
-    modal.classList.remove('hidden');
-    renderNotificationFeed(currentNotificationFilter);
-    if (backdrop) backdrop.classList.remove('opacity-0');
-    if (panel) {
-      panel.classList.remove('opacity-0', 'translate-y-2', 'scale-95');
-      panel.classList.add('opacity-100', 'translate-y-0', 'scale-100');
-    }
-  } else {
-    closeNotificationDropdown();
-  }
+  renderNotificationFeed(currentNotificationFilter);
+  modal.classList.remove('hidden');
+  if (window.lucide) lucide.createIcons();
 }
 
 function closeNotificationDropdown() {
   const modal = document.getElementById('notificationDropdownMenu');
-  const panel = document.getElementById('notificationPanel');
-  const backdrop = document.getElementById('notificationBackdrop');
+  if (modal) modal.classList.add('hidden');
+}
+
+function toggleNotificationDropdown(e) {
+  if (e) {
+    if (e.preventDefault) e.preventDefault();
+    if (e.stopPropagation) e.stopPropagation();
+  }
+  const modal = document.getElementById('notificationDropdownMenu');
   if (!modal) return;
 
-  if (backdrop) backdrop.classList.add('opacity-0');
-  if (panel) {
-    panel.classList.remove('opacity-100', 'translate-y-0', 'scale-100');
-    panel.classList.add('opacity-0', 'translate-y-2', 'scale-95');
+  if (modal.classList.contains('hidden')) {
+    openNotificationDropdown();
+  } else {
+    closeNotificationDropdown();
   }
-  setTimeout(() => {
-    modal.classList.add('hidden');
-  }, 150);
 }
 
 function closeAllHeaderDropdowns() {
@@ -6770,6 +6765,7 @@ function clearAllNotifications() {
 }
 
 // Window bindings
+window.openNotificationDropdown = openNotificationDropdown;
 window.toggleNotificationDropdown = toggleNotificationDropdown;
 window.closeNotificationDropdown = closeNotificationDropdown;
 window.filterNotificationFeed = filterNotificationFeed;
