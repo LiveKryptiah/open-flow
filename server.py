@@ -36,8 +36,23 @@ else:
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode("utf-8")).hexdigest()
 
+def ensure_db_ready():
+    global DB_FILE
+    if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+        DB_FILE = "/tmp/openflow_workos.db"
+        if not os.path.exists(DB_FILE):
+            source_db = os.path.join(BASE_DIR, "openflow_workos.db")
+            if os.path.exists(source_db):
+                try:
+                    import shutil
+                    shutil.copy2(source_db, DB_FILE)
+                except Exception as e:
+                    print("[Vercel DB Copy Error]:", e)
+            init_db()
+
 def get_db():
-    conn = sqlite3.connect(DB_FILE)
+    ensure_db_ready()
+    conn = sqlite3.connect(DB_FILE, timeout=20.0)
     conn.row_factory = sqlite3.Row
     return conn
 
