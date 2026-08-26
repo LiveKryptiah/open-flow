@@ -326,12 +326,7 @@
             </div>
           </div>
 
-          <button id="openAddColumnBtn" onclick="openAddColumnModalDirect()" class="m3-btn-tonal text-xs py-1.5">
-            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
-            <span class="hidden md:inline">Add Column</span>
-          </button>
-
-          <!-- Website Showcase Button on the Left Side of New Feature -->
+          <!-- Website Showcase Button on the Left Side of Notification Bell -->
           <button id="openWebsiteShowcaseHeaderBtn" onclick="openProjectWebsiteModalDirect()" class="px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-[#202024] text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-[#2e2e34] hover:bg-slate-200 dark:hover:bg-[#2a2a30] transition-all flex items-center gap-1.5 shadow-2xs" title="Live Project Website Showcase & Simulator">
             <div class="relative flex items-center justify-center">
               <i data-lucide="globe" class="w-3.5 h-3.5 text-slate-900 dark:text-slate-100"></i>
@@ -394,11 +389,6 @@
             </div>
           </div>
 
-          <button id="openNewProjectModalBtn" onclick="openInsertModal()" class="m3-btn-filled text-xs py-1.5">
-            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-            <span>New Feature</span>
-          </button>
-
         </div>
 
       </header>
@@ -406,10 +396,10 @@
       <!-- Main Workspace Views & Grid Container -->
       <main class="flex-1 p-4 sm:p-6 w-full space-y-4">
         
-        <!-- Filter & Search Toolbar Bar -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white dark:bg-[#18181b] p-3 rounded-2xl border border-slate-200 dark:border-[#27272a] shadow-2xs">
+        <!-- Data Grid Controls & Search Toolbar -->
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 bg-white dark:bg-[#18181b] p-3 rounded-2xl border border-slate-200 dark:border-[#27272a] shadow-2xs">
           
-          <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+          <div class="flex items-center gap-2 w-full lg:w-auto flex-wrap">
             <div class="relative flex-1 sm:w-64">
               <i data-lucide="search" class="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10"></i>
               <input type="text" id="searchInput" placeholder="Search features..." class="search-input-field w-full pl-10 pr-3 py-1.5 bg-slate-50 dark:bg-[#121214] border border-slate-200 dark:border-[#2c2c32] rounded-xl text-xs font-medium text-slate-800 dark:text-slate-200 focus:outline-none">
@@ -427,12 +417,23 @@
             <select id="filterDeptSelect" class="px-2.5 py-1.5 bg-slate-50 dark:bg-[#121214] border border-slate-200 dark:border-[#2c2c32] rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 focus:outline-none cursor-pointer">
               <option value="">All Owners / Depts</option>
             </select>
+
+            <button id="clearBoardBtn" onclick="handleClearBoard()" class="m3-btn-outlined text-xs py-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" title="Reset all task records from current board">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+              <span class="hidden md:inline">Reset</span>
+            </button>
           </div>
 
-          <div class="flex items-center gap-2 self-end sm:self-auto">
-            <button id="clearBoardBtn" onclick="handleClearBoard()" class="m3-btn-outlined text-xs py-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" title="Clear all task records from current board">
-              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-              <span class="hidden md:inline">Reset Records</span>
+          <!-- Data Grid Actions (Add Column & New Feature) -->
+          <div class="flex items-center gap-2 self-end lg:self-auto flex-shrink-0">
+            <button id="openAddColumnBtn" onclick="openAddColumnModalDirect()" class="m3-btn-tonal text-xs py-1.5">
+              <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+              <span>Add Column</span>
+            </button>
+
+            <button id="openNewProjectModalBtn" onclick="openInsertModal()" class="m3-btn-filled text-xs py-1.5 shadow-xs">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>New Feature</span>
             </button>
           </div>
 
