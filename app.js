@@ -3046,7 +3046,7 @@ function renderDashboardView() {
   const projectName = (activeBoard && activeBoard.title) ? activeBoard.title : 'Current Workspace';
 
   let html = `
-    <div class="p-6 md:p-8 max-w-7xl mx-auto space-y-8 w-full">
+    <div class="p-6 md:p-8 w-full space-y-6 text-left">
       
       <!-- Top Section Header -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200 dark:border-[#27272a]">
