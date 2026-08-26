@@ -3037,139 +3037,226 @@ function renderDashboardView() {
     else planningCount++;
   });
 
+  const total = activeItems.length || 1;
+  const completedPct = Math.round((completedCount / total) * 100);
+  const inProgressPct = Math.round((inProgressCount / total) * 100);
+  const reviewPct = Math.round((reviewCount / total) * 100);
+  const planningPct = Math.max(0, 100 - completedPct - inProgressPct - reviewPct);
+
+  const projectName = (activeBoard && activeBoard.title) ? activeBoard.title : 'Current Workspace';
+
   let html = `
-    <!-- Top KPI Metric Cards Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+    <div class="p-6 md:p-8 max-w-7xl mx-auto space-y-8 w-full">
       
-      <!-- Card 1: Total Features Scope -->
-      <div class="m3-card-elevated p-5 rounded-2xl flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Features Scope</span>
-          <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-zinc-800/80 text-slate-600 dark:text-zinc-400 flex items-center justify-center">
-            <i data-lucide="layers" class="w-4.5 h-4.5"></i>
-          </div>
+      <!-- Top Section Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200 dark:border-[#27272a]">
+        <div>
+          <h2 class="text-base md:text-lg font-bold text-slate-900 dark:text-white tracking-tight">Executive Project Analytics</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Real-time roadmap tracking, feature delivery status, and system telemetry</p>
         </div>
-        <div class="mt-3">
-          <div class="text-2xl font-extrabold text-slate-900 tracking-tight font-mono">
-            ${activeItems.length} Features
-          </div>
-          <span class="text-xs text-slate-700 dark:text-zinc-300 font-medium">Active project roadmap</span>
+        <div class="flex items-center gap-2">
+          <span class="px-3 py-1 rounded-full text-xs font-mono font-medium bg-white dark:bg-[#18181c] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-[#2c2c32] shadow-2xs flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="truncate max-w-[200px]">${projectName}</span>
+          </span>
         </div>
       </div>
 
-      <!-- Card 2: Features In Review -->
-      <div class="m3-card-elevated p-5 rounded-2xl flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Features In Review</span>
-          <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-zinc-800/80 text-slate-600 dark:text-zinc-400 flex items-center justify-center">
-            <i data-lucide="check-circle" class="w-4.5 h-4.5"></i>
-          </div>
-        </div>
-        <div class="mt-3">
-          <div class="text-2xl font-extrabold text-slate-900 tracking-tight">${reviewCount} Features</div>
-          <span class="text-xs text-slate-600 dark:text-zinc-400 font-medium">Pending QA & Verification</span>
-        </div>
-      </div>
-
-      <!-- Card 3: In Progress Features -->
-      <div class="m3-card-elevated p-5 rounded-2xl flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active In Progress</span>
-          <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-zinc-800/80 text-slate-600 dark:text-zinc-400 flex items-center justify-center">
-            <i data-lucide="clock" class="w-4.5 h-4.5"></i>
-          </div>
-        </div>
-        <div class="mt-3">
-          <div class="text-2xl font-extrabold text-slate-900 tracking-tight">${inProgressCount} Features</div>
-          <span class="text-xs text-slate-600 dark:text-zinc-400 font-medium">Ongoing sprint tasks</span>
-        </div>
-      </div>
-
-      <!-- Card 4: Completed Features -->
-      <div class="m3-card-elevated p-5 rounded-2xl flex flex-col justify-between">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Shipped & Live</span>
-          <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-zinc-800/80 text-slate-600 dark:text-zinc-400 flex items-center justify-center">
-            <i data-lucide="check-check" class="w-4.5 h-4.5"></i>
-          </div>
-        </div>
-        <div class="mt-3">
-          <div class="text-2xl font-extrabold text-slate-900 tracking-tight">${completedCount} Features</div>
-          <span class="text-xs text-slate-600 dark:text-zinc-400 font-medium">Production delivered</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Charts Breakdown Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 w-full">
-      
-      <!-- Left: Feature Scope & Progress Breakdown (~7 Cols) -->
-      <div class="lg:col-span-7 m3-card-elevated p-6 rounded-2xl space-y-4">
-        <h3 class="text-sm font-bold text-slate-900">Feature Delivery & Progress Breakdown</h3>
-  `;
-
-  if (activeItems.length === 0) {
-    html += `
-      <div class="border border-dashed border-slate-200 rounded-lg p-8 text-center text-slate-400">
-        <p class="text-xs">No features added yet. Feature progress breakdown will appear once you add records.</p>
-      </div>
-    `;
-  } else {
-    html += `<div class="space-y-3.5 text-xs">`;
-    activeItems.slice(0, 8).forEach(item => {
-      const title = item.data.col_title || 'Untitled Feature';
-      const progress = item.data.col_progress || 0;
-      const dept = item.data.col_dept || 'Core';
-      const status = item.data.col_status || 'Planning';
-
-      html += `
-        <div class="space-y-1.5">
-          <div class="flex justify-between font-semibold text-slate-800">
-            <div class="flex items-center gap-2 truncate max-w-[340px]">
-              <span class="truncate">${title}</span>
-              <span class="text-[10px] font-normal px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-mono">${dept}</span>
-            </div>
-            <span class="font-mono text-slate-700 dark:text-zinc-300">${progress}% (${status})</span>
-          </div>
-          <div class="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
-            <div class="h-full bg-black dark:bg-black text-white border border-slate-700 rounded-full transition-all" style="width: ${progress}%"></div>
-          </div>
-        </div>
-      `;
-    });
-    html += `</div>`;
-  }
-
-  html += `
-      </div>
-
-      <!-- Right: Compliance & Event Bus Automation Health (~5 Cols) -->
-      <div class="lg:col-span-5 m3-card-elevated p-6 rounded-2xl space-y-4">
-        <h3 class="text-sm font-bold text-slate-900">Project & Event Bus Health</h3>
+      <!-- Top KPI Metric Cards Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full">
         
-        <div class="space-y-3 text-xs">
-          <div class="flex items-center justify-between p-3 bg-slate-100 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 rounded-lg text-slate-600 dark:text-zinc-400 font-semibold">
-            <span class="flex items-center gap-2"><i data-lucide="shield-check" class="w-4 h-4 text-slate-600 dark:text-zinc-400"></i> Active Fields in Workspace</span>
-            <span>${activeColumnsConfig.length} Fields</span>
+        <!-- Card 1: Total Scope -->
+        <div class="bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#27272a] rounded-2xl p-5 shadow-2xs flex flex-col justify-between hover:border-slate-300 dark:hover:border-[#38383e] transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Total Scope</span>
+            <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+              <i data-lucide="layers" class="w-4 h-4"></i>
+            </div>
           </div>
-
-          <div class="flex items-center justify-between p-3 bg-slate-100 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 rounded-lg text-slate-600 dark:text-zinc-400 font-semibold">
-            <span class="flex items-center gap-2"><i data-lucide="zap" class="w-4 h-4 text-slate-500 dark:text-zinc-400"></i> Active Event Workflows</span>
-            <span>${activeAutomations.filter(a => a.active).length} Running</span>
-          </div>
-
-          <div class="flex items-center justify-between p-3 bg-slate-100 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 rounded-lg text-slate-600 dark:text-zinc-400 font-semibold">
-            <span class="flex items-center gap-2"><i data-lucide="history" class="w-4 h-4 text-slate-600 dark:text-zinc-400"></i> Immutable Audit Events</span>
-            <span>${activeAuditLogs.length} Mutations</span>
+          <div class="mt-4">
+            <div class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight font-mono">
+              ${activeItems.length}
+            </div>
+            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Total registered features</span>
           </div>
         </div>
+
+        <!-- Card 2: In Progress -->
+        <div class="bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#27272a] rounded-2xl p-5 shadow-2xs flex flex-col justify-between hover:border-slate-300 dark:hover:border-[#38383e] transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Active In Progress</span>
+            <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+              <i data-lucide="clock" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div class="mt-4">
+            <div class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight font-mono">
+              ${inProgressCount}
+            </div>
+            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Under active development</span>
+          </div>
+        </div>
+
+        <!-- Card 3: In Review -->
+        <div class="bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#27272a] rounded-2xl p-5 shadow-2xs flex flex-col justify-between hover:border-slate-300 dark:hover:border-[#38383e] transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">In Review & QA</span>
+            <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+              <i data-lucide="check-circle" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div class="mt-4">
+            <div class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight font-mono">
+              ${reviewCount}
+            </div>
+            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Awaiting verification</span>
+          </div>
+        </div>
+
+        <!-- Card 4: Shipped -->
+        <div class="bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#27272a] rounded-2xl p-5 shadow-2xs flex flex-col justify-between hover:border-slate-300 dark:hover:border-[#38383e] transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Shipped & Live</span>
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <i data-lucide="check-check" class="w-4 h-4"></i>
+            </div>
+          </div>
+          <div class="mt-4">
+            <div class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight font-mono">
+              ${completedCount}
+            </div>
+            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">Production delivered</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Roadmap Distribution Ratio Bar -->
+      <div class="bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#27272a] rounded-2xl p-5 shadow-2xs space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-slate-900 dark:text-white">Workspace Delivery Distribution</span>
+          <span class="font-mono text-slate-500 dark:text-slate-400 text-[11px]">${completedPct}% Overall Completion</span>
+        </div>
+        <div class="h-3 w-full bg-slate-100 dark:bg-[#222228] rounded-full overflow-hidden flex">
+          <div style="width: ${completedPct}%" class="h-full bg-emerald-500 transition-all" title="Completed: ${completedCount} (${completedPct}%)"></div>
+          <div style="width: ${inProgressPct}%" class="h-full bg-amber-500 transition-all" title="In Progress: ${inProgressCount} (${inProgressPct}%)"></div>
+          <div style="width: ${reviewPct}%" class="h-full bg-purple-500 transition-all" title="Review: ${reviewCount} (${reviewPct}%)"></div>
+          <div style="width: ${planningPct}%" class="h-full bg-slate-300 dark:bg-slate-700 transition-all" title="Planning: ${planningCount} (${planningPct}%)"></div>
+        </div>
+        <div class="flex flex-wrap items-center gap-4 text-[11px] text-slate-500 dark:text-slate-400 pt-1">
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Completed (${completedCount})</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-500"></span> In Progress (${inProgressCount})</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-purple-500"></span> Review (${reviewCount})</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-600"></span> Planning (${planningCount})</span>
+        </div>
+      </div>
+
+      <!-- Charts & Health Breakdown Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full">
+        
+        <!-- Left: Feature Scope & Progress Breakdown (7 Cols) -->
+        <div class="lg:col-span-7 bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#27272a] rounded-2xl p-6 shadow-2xs space-y-5">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white">Feature Delivery & Progress Breakdown</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Live execution progress per feature item</p>
+            </div>
+            <span class="text-xs font-mono font-medium text-slate-400 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-[#202024]">Top 8</span>
+          </div>
+  
+          ${activeItems.length === 0 ? `
+            <div class="border border-dashed border-slate-200 dark:border-[#2c2c32] rounded-xl p-8 text-center text-slate-400">
+              <i data-lucide="layers" class="w-8 h-8 mx-auto mb-2 opacity-40"></i>
+              <p class="text-xs">No features registered in this workspace yet. Add records in Data Grid or Kanban to see telemetry.</p>
+            </div>
+          ` : `
+            <div class="space-y-4 text-xs">
+              ${activeItems.slice(0, 8).map(item => {
+                const title = item.data.col_title || 'Untitled Feature';
+                const progress = item.data.col_progress || 0;
+                const dept = item.data.col_dept || 'Core';
+                const status = item.data.col_status || 'Planning';
+                const stClass = getStatusClass(status);
+
+                return `
+                  <div class="space-y-1.5 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-[#202024] transition-colors">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2 truncate max-w-[280px] sm:max-w-[340px]">
+                        <span class="font-medium text-slate-800 dark:text-slate-200 truncate">${title}</span>
+                        <span class="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-100 dark:bg-[#27272a] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#38383e]">${dept}</span>
+                      </div>
+                      <div class="flex items-center gap-2 font-mono">
+                        <span class="text-[10px] status-badge ${stClass}">${status}</span>
+                        <span class="text-slate-700 dark:text-slate-300 font-semibold w-10 text-right">${progress}%</span>
+                      </div>
+                    </div>
+                    <div class="h-2 w-full bg-slate-100 dark:bg-[#222228] rounded-full overflow-hidden">
+                      <div class="h-full bg-slate-900 dark:bg-slate-100 rounded-full transition-all duration-300" style="width: ${progress}%"></div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `}
+        </div>
+
+        <!-- Right: Event Bus Health & System Telemetry (5 Cols) -->
+        <div class="lg:col-span-5 bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#27272a] rounded-2xl p-6 shadow-2xs space-y-5">
+          <div class="pb-3 border-b border-slate-100 dark:border-slate-800">
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">System & Engine Telemetry</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Database state, triggers, and audit status</p>
+          </div>
+          
+          <div class="space-y-3.5 text-xs">
+            <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-[#202024] border border-slate-200/80 dark:border-[#2c2c32] rounded-xl text-slate-700 dark:text-slate-300">
+              <span class="flex items-center gap-2.5 font-medium">
+                <div class="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                  <i data-lucide="table" class="w-4 h-4"></i>
+                </div>
+                <span>Active Schema Columns</span>
+              </span>
+              <span class="font-mono font-bold text-slate-900 dark:text-white px-2.5 py-1 bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#38383e] rounded-lg">${activeColumnsConfig.length} Fields</span>
+            </div>
+
+            <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-[#202024] border border-slate-200/80 dark:border-[#2c2c32] rounded-xl text-slate-700 dark:text-slate-300">
+              <span class="flex items-center gap-2.5 font-medium">
+                <div class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                  <i data-lucide="zap" class="w-4 h-4"></i>
+                </div>
+                <span>Event Bus Automations</span>
+              </span>
+              <span class="font-mono font-bold text-slate-900 dark:text-white px-2.5 py-1 bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#38383e] rounded-lg">${activeAutomations.filter(a => a.active).length} Active</span>
+            </div>
+
+            <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-[#202024] border border-slate-200/80 dark:border-[#2c2c32] rounded-xl text-slate-700 dark:text-slate-300">
+              <span class="flex items-center gap-2.5 font-medium">
+                <div class="w-7 h-7 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                  <i data-lucide="history" class="w-4 h-4"></i>
+                </div>
+                <span>Cryptographic Audit Trail</span>
+              </span>
+              <span class="font-mono font-bold text-slate-900 dark:text-white px-2.5 py-1 bg-white dark:bg-[#18181c] border border-slate-200 dark:border-[#38383e] rounded-lg">${activeAuditLogs.length} Events</span>
+            </div>
+
+            <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-[#202024] border border-slate-200/80 dark:border-[#2c2c32] rounded-xl text-slate-700 dark:text-slate-300">
+              <span class="flex items-center gap-2.5 font-medium">
+                <div class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                  <i data-lucide="database" class="w-4 h-4"></i>
+                </div>
+                <span>Database Engine</span>
+              </span>
+              <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">Turso Cloud</span>
+            </div>
+          </div>
+        </div>
+
       </div>
 
     </div>
   `;
 
   container.innerHTML = html;
+  if (window.lucide) lucide.createIcons();
 }
 
 // =========================================================================
