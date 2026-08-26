@@ -385,20 +385,38 @@ class WorkOSHandler(http.server.SimpleHTTPRequestHandler):
         raw_parsed = urllib.parse.urlparse(self.path)
         qs = urllib.parse.parse_qs(raw_parsed.query)
 
-        # 1. Check if route was passed in query parameter (e.g. from vercel.json rewrite)
+        path = raw_parsed.path
+
+        # 1. Check route param from vercel.json rewrite
         if "route" in qs and qs["route"]:
-            subpath = qs["route"][0].lstrip("/")
-            return "/api/" + subpath, qs
+            path = qs["route"][0]
+        # 2. Check x-matched-path / x-forwarded-uri from Vercel Edge proxy
+        elif self.headers.get("x-matched-path"):
+            path = urllib.parse.urlparse(self.headers["x-matched-path"]).path
+        elif self.headers.get("x-forwarded-uri"):
+            path = urllib.parse.urlparse(self.headers["x-forwarded-uri"]).path
 
-        # 2. Check x-matched-path / x-forwarded-uri header from Vercel Edge Proxy
-        forwarded = self.headers.get("x-matched-path") or self.headers.get("x-forwarded-uri") or self.headers.get("x-envoy-original-path")
-        if forwarded and not forwarded.startswith("/api/index"):
-            f_parsed = urllib.parse.urlparse(forwarded)
-            f_qs = urllib.parse.parse_qs(f_parsed.query)
-            combined_qs = {**qs, **f_qs}
-            return f_parsed.path, combined_qs
+        # 3. Clean and normalize path
+        path = path.strip()
+        if path.endswith(".py"):
+            path = path[:-3]
+        if path.startswith("/api/index"):
+            path = path[len("/api/index"):]
+        elif path.startswith("/index"):
+            path = path[len("/index"):]
 
-        return raw_parsed.path, qs
+        path = path.strip("/")
+        if not path or path == "api":
+            norm = "/api"
+        elif path.startswith("api/"):
+            norm = "/" + path
+        else:
+            norm = "/api/" + path
+
+        norm = norm.rstrip("/")
+
+        print(f"[WorkOS Route Match] Raw: '{self.path}' -> Normalized: '{norm}'", flush=True)
+        return norm, qs
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=BASE_DIR, **kwargs)
